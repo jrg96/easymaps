@@ -39,5 +39,11 @@ EasyMap.prototype = {
     },
     setZoom: function(zoom){
         this.map_obj.setZoom(zoom);
+    },
+    changeToRoadmap: function(){
+        this.map_obj.setMapTypeId(google.maps.MapTypeId.google.maps.MapTypeId.ROADMAP);
+    },
+    changeToSatellite: function(){
+        this.map_obj.setMapTypeId(google.maps.MapTypeId.SATELLITE);
     }
 }
