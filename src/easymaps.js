@@ -16,8 +16,11 @@
 function EasyMap(config){
     this.map_el = document.getElementById(config.container);
     this.map_obj = null;
+    this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
     this.marker_res = {};
+    
+    alert(this.info_window_system);
     
     this.map_options = {
         center: new google.maps.LatLng(config.latitude, config.longitude),
@@ -62,5 +65,12 @@ EasyMap.prototype = {
     },
     addMarkerRes: function(key, value){
         this.marker_res[key] = value;
+    },
+    setMarkerRes: function(dictionary){
+        this.marker_res = dictionary;
     }
 }
+
+EasyMap.InfoWindowSystem = {NONE_WINDOW : 0,
+                            ONE_WINDOW: 1,
+                            MULTIPLE_WINDOW : 2};
