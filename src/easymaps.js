@@ -27,5 +27,8 @@ function EasyMap(config){
 }
 
 EasyMap.prototype = {
-    constructor: EasyMap
+    constructor: EasyMap,
+    getCenter: function(){
+        return this.map_obj.getCenter();
+    }
 }
