@@ -13,7 +13,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
 
-function EasyMap(){
+function EasyMap(config){
+    this.map_el = document.getElementById(config.container);
+    this.map_obj = null;
+    
+    this.map_options = {
+        center: new google.maps.LatLng(config.latitude, config.longitude),
+        zoom: 4,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    
+    this.map_obj = new google.maps.Map(this.map_el, this.map_options);
 }
 
 EasyMap.prototype = {
