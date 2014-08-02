@@ -16,6 +16,7 @@
 function EasyMap(config){
     this.map_el = document.getElementById(config.container);
     this.map_obj = null;
+    this.map_markers = [];
     
     this.map_options = {
         center: new google.maps.LatLng(config.latitude, config.longitude),
@@ -45,5 +46,13 @@ EasyMap.prototype = {
     },
     changeToSatellite: function(){
         this.map_obj.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+    },
+    addMarker: function(lat, lng){
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: this.map_obj
+        });
+        
+        this.map_markers.push(marker);
     }
 }
