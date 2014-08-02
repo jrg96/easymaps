@@ -17,6 +17,7 @@ function EasyMap(config){
     this.map_el = document.getElementById(config.container);
     this.map_obj = null;
     this.map_markers = [];
+    this.marker_res = {};
     
     this.map_options = {
         center: new google.maps.LatLng(config.latitude, config.longitude),
@@ -48,12 +49,18 @@ EasyMap.prototype = {
         this.map_obj.setMapTypeId(google.maps.MapTypeId.SATELLITE);
     },
     addMarker: function(config){
+        
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(config.latitude, config.longitude),
             map: this.map_obj,
-            title: ((config.title != null) ? config.title : '')
+            title: ((config.title != null) ? config.title : ''),
+            icon: ((config.icon != null) ? this.marker_res[config.icon] : '')
         });
         
         this.map_markers.push(marker);
+        return marker;
+    },
+    addMarkerRes: function(key, value){
+        this.marker_res[key] = value;
     }
 }
