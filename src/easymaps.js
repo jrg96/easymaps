@@ -20,6 +20,7 @@ function EasyMap(config){
     this.map_markers = [];
     this.marker_res = {};
     this.info_windows = [];
+    this.marker_callback = null;
     
     this.map_options = {
         center: new google.maps.LatLng(config.latitude, config.longitude),
@@ -85,6 +86,12 @@ EasyMap.prototype = {
             content:'placeholder'
         });
         this.info_windows.push(infowindow);
+    },
+    setMarkersCallbackFunc: function(func){
+        this.marker_callback = func;
+    },
+    getMarkersCallbackFunc: function(){
+        return this.marker_callback;
     }
 }
 
