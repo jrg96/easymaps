@@ -30,5 +30,8 @@ EasyMap.prototype = {
     constructor: EasyMap,
     getCenter: function(){
         return this.map_obj.getCenter();
+    },
+    setCenter: function(lat, lng){
+        this.map_obj.setCenter(new google.maps.LatLng(lat, lng));
     }
 }
