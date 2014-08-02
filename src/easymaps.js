@@ -59,12 +59,17 @@ EasyMap.prototype = {
         this.map_obj.setMapTypeId(google.maps.MapTypeId.SATELLITE);
     },
     addMarker: function(config){
+        var parent = this;
         
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(config.latitude, config.longitude),
             map: this.map_obj,
             title: ((config.title != null) ? config.title : ''),
             icon: ((config.icon != null) ? this.marker_res[config.icon] : '')
+        });
+        
+        google.maps.event.addListener(marker, 'click', function() {
+            parent.marker_callback(marker);
         });
         
         this.map_markers.push(marker);
