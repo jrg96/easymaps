@@ -33,5 +33,11 @@ EasyMap.prototype = {
     },
     setCenter: function(lat, lng){
         this.map_obj.setCenter(new google.maps.LatLng(lat, lng));
+    },
+    getZoom: function(){
+        return this.map_obj.getZoom();
+    },
+    setZoom: function(zoom){
+        this.map_obj.setZoom(zoom);
     }
 }
