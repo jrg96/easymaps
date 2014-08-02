@@ -47,10 +47,11 @@ EasyMap.prototype = {
     changeToSatellite: function(){
         this.map_obj.setMapTypeId(google.maps.MapTypeId.SATELLITE);
     },
-    addMarker: function(lat, lng){
+    addMarker: function(config){
         var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(lat, lng),
-            map: this.map_obj
+            position: new google.maps.LatLng(config.latitude, config.longitude),
+            map: this.map_obj,
+            title: ((config.title != null) ? config.title : '')
         });
         
         this.map_markers.push(marker);
