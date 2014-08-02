@@ -19,8 +19,7 @@ function EasyMap(config){
     this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
     this.marker_res = {};
-    
-    alert(this.info_window_system);
+    this.info_windows = [];
     
     this.map_options = {
         center: new google.maps.LatLng(config.latitude, config.longitude),
@@ -29,10 +28,17 @@ function EasyMap(config){
     };
     
     this.map_obj = new google.maps.Map(this.map_el, this.map_options);
+    
+    this.initInfoWindowSystem();
 }
 
 EasyMap.prototype = {
     constructor: EasyMap,
+    initInfoWindowSystem: function(){
+        if (this.info_window_system == EasyMap.InfoWindowSystem.ONE_WINDOW){
+            this.addInfoWindow();
+        }
+    },
     getCenter: function(){
         return this.map_obj.getCenter();
     },
@@ -61,6 +67,11 @@ EasyMap.prototype = {
         });
         
         this.map_markers.push(marker);
+        
+        if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
+            this.addInfoWindow();
+        }
+        
         return marker;
     },
     addMarkerRes: function(key, value){
@@ -68,6 +79,12 @@ EasyMap.prototype = {
     },
     setMarkerRes: function(dictionary){
         this.marker_res = dictionary;
+    },
+    addInfoWindow: function(){
+        var infowindow = new google.maps.InfoWindow({
+            content:'placeholder'
+        });
+        this.info_windows.push(infowindow);
     }
 }
 
