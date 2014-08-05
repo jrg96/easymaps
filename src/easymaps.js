@@ -99,9 +99,26 @@ EasyMap.prototype = {
     getMarkersCallbackFunc: function(){
         return this.marker_callback;
     },
+    getMarkerIndex: function(marker){
+        return this.map_markers.indexOf(marker);
+    },
     setInfoContent: function(marker, value){
-        var index = this.map_markers.indexOf(marker);
+        var index = this.getMarkerIndex(marker);
         this.info_contents[index] = value;
+    },
+    getInfoWindow: function(marker){
+        if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
+            return this.info_windows[this.getMarkerIndex(marker)];
+        }
+        return this.info_windows[0];
+    },
+    showInfoWindow: function(marker, value){
+        if (value != null){
+            this.setInfoContent(marker, value);
+        }
+        var info_window = this.getInfoWindow(marker);
+        info_window.setContent(value);
+        info_window.open(this.map_obj, marker);
     }
 }
 
