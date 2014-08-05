@@ -106,6 +106,9 @@ EasyMap.prototype = {
         var index = this.getMarkerIndex(marker);
         this.info_contents[index] = value;
     },
+    getInfoContent: function(marker){
+        return this.info_contents[this.getMarkerIndex(marker)];
+    },
     getInfoWindow: function(marker){
         if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
             return this.info_windows[this.getMarkerIndex(marker)];
@@ -117,7 +120,7 @@ EasyMap.prototype = {
             this.setInfoContent(marker, value);
         }
         var info_window = this.getInfoWindow(marker);
-        info_window.setContent(value);
+        info_window.setContent(this.getInfoContent(marker));
         info_window.open(this.map_obj, marker);
     }
 }
