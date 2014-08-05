@@ -20,6 +20,7 @@ function EasyMap(config){
     this.map_markers = [];
     this.marker_res = {};
     this.info_windows = [];
+    this.info_contents = [];
     this.marker_callback = null;
     
     this.map_options = {
@@ -97,6 +98,10 @@ EasyMap.prototype = {
     },
     getMarkersCallbackFunc: function(){
         return this.marker_callback;
+    },
+    setInfoContent: function(marker, value){
+        var index = this.map_markers.indexOf(marker);
+        this.info_contents[index] = value;
     }
 }
 
