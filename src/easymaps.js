@@ -19,6 +19,7 @@ function EasyMap(config){
     this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
     this.marker_res = {};
+    this.marker_metadata = {};
     this.info_windows = [];
     this.info_contents = [];
     this.marker_callback = null;
@@ -74,6 +75,9 @@ EasyMap.prototype = {
         });
         
         this.map_markers.push(marker);
+        if (config.metadata != null){
+            this.marker_metadata[marker] = config.metadata;
+        }
         
         if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
             this.addInfoWindow();
