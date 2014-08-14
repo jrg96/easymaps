@@ -106,6 +106,12 @@ EasyMap.prototype = {
     getMarkerIndex: function(marker){
         return this.map_markers.indexOf(marker);
     },
+    getMarkerMetadata: function(marker){
+        return this.marker_metadata[marker];
+    },
+    setMarkerMetadata: function(marker, metadata){
+        this.marker_metadata[marker] = metadata;
+    },
     setInfoContent: function(marker, value){
         var index = this.getMarkerIndex(marker);
         this.info_contents[index] = value;
