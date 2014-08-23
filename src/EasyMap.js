@@ -19,7 +19,6 @@ function EasyMap(config){
     this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
     this.marker_res = {};
-    this.marker_metadata = {};
     this.info_windows = [];
     this.info_contents = [];
     this.marker_callback = null;
@@ -63,12 +62,7 @@ EasyMap.prototype = {
     addMarker: function(config){
         var parent = this;
         
-        var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(config.latitude, config.longitude),
-            map: this.map_obj,
-            title: ((config.title != null) ? config.title : ''),
-            icon: ((config.icon != null) ? this.marker_res[config.icon] : '')
-        });
+        var marker = new EasyMarker(config, this.map_ibj);
         
         google.maps.event.addListener(marker, 'click', function() {
             parent.marker_callback(marker);
@@ -105,12 +99,6 @@ EasyMap.prototype = {
     },
     getMarkerIndex: function(marker){
         return this.map_markers.indexOf(marker);
-    },
-    getMarkerMetadata: function(marker){
-        return this.marker_metadata[marker];
-    },
-    setMarkerMetadata: function(marker, metadata){
-        this.marker_metadata[marker] = metadata;
     },
     setInfoContent: function(marker, value){
         var index = this.getMarkerIndex(marker);
