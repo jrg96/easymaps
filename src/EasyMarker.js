@@ -21,6 +21,7 @@ function EasyMarker(config, map){
     this.icon = ((config.icon != null) ? this.map.marker_res[config.icon] : '');
     this.marker = null;
     this.metadata = null;
+    this.content = null;
     this.initMarker();
 }
  
@@ -39,5 +40,11 @@ EasyMarker.prototype = {
     },
     getMetadata: function(){
         return this.metadata;
+    },
+    setInfoContent: function(content){
+        this.content = content;
+    },
+    getInfoContent: function(){
+        return this.content;
     }
 }

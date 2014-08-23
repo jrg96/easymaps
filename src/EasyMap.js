@@ -98,13 +98,6 @@ EasyMap.prototype = {
     getMarkerIndex: function(marker){
         return this.map_markers.indexOf(marker);
     },
-    setInfoContent: function(marker, value){
-        var index = this.getMarkerIndex(marker);
-        this.info_contents[index] = value;
-    },
-    getInfoContent: function(marker){
-        return this.info_contents[this.getMarkerIndex(marker)];
-    },
     getInfoWindow: function(marker){
         if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
             return this.info_windows[this.getMarkerIndex(marker)];
@@ -113,11 +106,11 @@ EasyMap.prototype = {
     },
     showInfoWindow: function(marker, value){
         if (value != null){
-            this.setInfoContent(marker, value);
+            marker.setInfoContent(value);
         }
         var info_window = this.getInfoWindow(marker);
-        info_window.setContent(this.getInfoContent(marker));
-        info_window.open(this.map_obj, marker);
+        info_window.setContent(marker.getInfoContent());
+        info_window.open(this.map_obj, marker.marker);
     }
 }
 
