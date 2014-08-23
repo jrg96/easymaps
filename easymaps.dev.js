@@ -1,3 +1,57 @@
+// --- file[EasyMarker.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+function EasyMarker(config, map){
+    this.latitude = config.latitude;
+    this.longitude = config.longitude;
+    this.title = ((config.title != null) ? config.title : '');
+    this.map = map;
+    this.icon = ((config.icon != null) ? this.map.marker_res[config.icon] : '');
+    this.marker = null;
+    this.metadata = null;
+    this.content = null;
+    this.initMarker();
+}
+ 
+EasyMarker.prototype = {
+    constructor: EasyMarker,
+    initMarker: function(){
+        this.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(this.latitude, this.longitude),
+            map: this.map,
+            title: this.title,
+            icon: this.icon
+        });
+    },
+    setMetadata: function(metadata){
+        this.metadata = metadata;
+    },
+    getMetadata: function(){
+        return this.metadata;
+    },
+    setInfoContent: function(content){
+        this.content = content;
+    },
+    getInfoContent: function(){
+        return this.content;
+    }
+}
+
+
 // --- file[EasyMap.js] ---
 
 /* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
@@ -21,7 +75,6 @@ function EasyMap(config){
     this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
     this.marker_res = {};
-    this.marker_metadata = {};
     this.info_windows = [];
     this.info_contents = [];
     this.marker_callback = null;
@@ -65,21 +118,14 @@ EasyMap.prototype = {
     addMarker: function(config){
         var parent = this;
         
-        var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(config.latitude, config.longitude),
-            map: this.map_obj,
-            title: ((config.title != null) ? config.title : ''),
-            icon: ((config.icon != null) ? this.marker_res[config.icon] : '')
-        });
+        var marker = new EasyMarker(config, this.map_obj);
         
-        google.maps.event.addListener(marker, 'click', function() {
+        google.maps.event.addListener(marker.marker, 'click', function() {
             parent.marker_callback(marker);
         });
         
         this.map_markers.push(marker);
-        if (config.metadata != null){
-            this.marker_metadata[marker] = config.metadata;
-        }
+        marker.setMetadata(config.metadata);
         
         if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
             this.addInfoWindow();
@@ -108,19 +154,6 @@ EasyMap.prototype = {
     getMarkerIndex: function(marker){
         return this.map_markers.indexOf(marker);
     },
-    getMarkerMetadata: function(marker){
-        return this.marker_metadata[marker];
-    },
-    setMarkerMetadata: function(marker, metadata){
-        this.marker_metadata[marker] = metadata;
-    },
-    setInfoContent: function(marker, value){
-        var index = this.getMarkerIndex(marker);
-        this.info_contents[index] = value;
-    },
-    getInfoContent: function(marker){
-        return this.info_contents[this.getMarkerIndex(marker)];
-    },
     getInfoWindow: function(marker){
         if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
             return this.info_windows[this.getMarkerIndex(marker)];
@@ -129,17 +162,14 @@ EasyMap.prototype = {
     },
     showInfoWindow: function(marker, value){
         if (value != null){
-            this.setInfoContent(marker, value);
+            marker.setInfoContent(value);
         }
         var info_window = this.getInfoWindow(marker);
-        info_window.setContent(this.getInfoContent(marker));
-        info_window.open(this.map_obj, marker);
+        info_window.setContent(marker.getInfoContent());
+        info_window.open(this.map_obj, marker.marker);
     }
 }
 
 EasyMap.InfoWindowSystem = {NONE_WINDOW : 0,
                             ONE_WINDOW: 1,
                             MULTIPLE_WINDOW : 2};
-
-
-// --- file[] ---
