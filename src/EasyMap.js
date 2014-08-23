@@ -62,16 +62,14 @@ EasyMap.prototype = {
     addMarker: function(config){
         var parent = this;
         
-        var marker = new EasyMarker(config, this.map_ibj);
+        var marker = new EasyMarker(config, this.map_obj);
         
-        google.maps.event.addListener(marker, 'click', function() {
+        google.maps.event.addListener(marker.marker, 'click', function() {
             parent.marker_callback(marker);
         });
         
         this.map_markers.push(marker);
-        if (config.metadata != null){
-            this.marker_metadata[marker] = config.metadata;
-        }
+        marker.setMetadata(config.metadata);
         
         if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
             this.addInfoWindow();
