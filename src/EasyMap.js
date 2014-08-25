@@ -62,7 +62,7 @@ EasyMap.prototype = {
     addMarker: function(config){
         var parent = this;
         
-        var marker = new EasyMarker(config, this.map_obj);
+        var marker = new EasyMarker(config, this);
         
         google.maps.event.addListener(marker.marker, 'click', function() {
             parent.marker_callback(marker);

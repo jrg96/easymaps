@@ -17,8 +17,8 @@ function EasyMarker(config, map){
     this.latitude = config.latitude;
     this.longitude = config.longitude;
     this.title = ((config.title != null) ? config.title : '');
-    this.map = map;
-    this.icon = ((config.icon != null) ? this.map.marker_res[config.icon] : '');
+    this.map = map.map_obj;
+    this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
     this.marker = null;
     this.metadata = null;
     this.content = null;
