@@ -22,6 +22,7 @@ function EasyMarker(config, map){
     this.marker = null;
     this.metadata = null;
     this.content = null;
+    this.infoWindow = null;
     this.initMarker();
 }
  
@@ -46,5 +47,15 @@ EasyMarker.prototype = {
     },
     getInfoContent: function(){
         return this.content;
+    },
+    setInfoWindow: function(window){
+        this.infoWindow = window;
+    },
+    showInfoWindow: function(value){
+        if (value != null){
+            this.content = value;
+        }
+        this.infoWindow.setContent(this.getInfoContent());
+        this.infoWindow.open(this.map, this.marker);
     }
 }

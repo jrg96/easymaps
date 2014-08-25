@@ -18,8 +18,7 @@
         var map = null;
 		
         function marker_callback(marker){
-            //alert('hello ' + marker.marker.getTitle());
-			map.showInfoWindow(marker);
+			marker.showInfoWindow();
         }
 		
 		function initialize() {

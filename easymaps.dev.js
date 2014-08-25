@@ -21,8 +21,9 @@ function EasyMap(config){
     this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
     this.marker_res = {};
-    this.info_windows = [];
-    this.info_contents = [];
+    
+    this.infoWindow = null;
+    
     this.marker_callback = null;
     
     this.map_options = {
@@ -40,7 +41,9 @@ EasyMap.prototype = {
     constructor: EasyMap,
     initInfoWindowSystem: function(){
         if (this.info_window_system == EasyMap.InfoWindowSystem.ONE_WINDOW){
-            this.addInfoWindow();
+            this.infoWindow = new google.maps.InfoWindow({
+                content:'placeholder'
+            });
         }
     },
     getCenter: function(){
@@ -73,9 +76,16 @@ EasyMap.prototype = {
         this.map_markers.push(marker);
         marker.setMetadata(config.metadata);
         
+        
+        var infoWindow = this.infoWindow;
+        
         if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
-            this.addInfoWindow();
+            infoWindow = new google.maps.InfoWindow({
+                content:'placeholder'
+		    });
         }
+        
+        marker.setInfoWindow(infoWindow);
         
         return marker;
     },
@@ -85,12 +95,6 @@ EasyMap.prototype = {
     setMarkerRes: function(dictionary){
         this.marker_res = dictionary;
     },
-    addInfoWindow: function(){
-        var infowindow = new google.maps.InfoWindow({
-            content:'placeholder'
-        });
-        this.info_windows.push(infowindow);
-    },
     setMarkersCallbackFunc: function(func){
         this.marker_callback = func;
     },
@@ -99,20 +103,6 @@ EasyMap.prototype = {
     },
     getMarkerIndex: function(marker){
         return this.map_markers.indexOf(marker);
-    },
-    getInfoWindow: function(marker){
-        if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW){
-            return this.info_windows[this.getMarkerIndex(marker)];
-        }
-        return this.info_windows[0];
-    },
-    showInfoWindow: function(marker, value){
-        if (value != null){
-            marker.setInfoContent(value);
-        }
-        var info_window = this.getInfoWindow(marker);
-        info_window.setContent(marker.getInfoContent());
-        info_window.open(this.map_obj, marker.marker);
     }
 }
 
@@ -147,6 +137,7 @@ function EasyMarker(config, map){
     this.marker = null;
     this.metadata = null;
     this.content = null;
+    this.infoWindow = null;
     this.initMarker();
 }
  
@@ -171,5 +162,15 @@ EasyMarker.prototype = {
     },
     getInfoContent: function(){
         return this.content;
+    },
+    setInfoWindow: function(window){
+        this.infoWindow = window;
+    },
+    showInfoWindow: function(value){
+        if (value != null){
+            this.content = value;
+        }
+        this.infoWindow.setContent(this.getInfoContent());
+        this.infoWindow.open(this.map, this.marker);
     }
 }
