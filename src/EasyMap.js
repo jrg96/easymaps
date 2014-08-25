@@ -18,6 +18,7 @@ function EasyMap(config){
     this.map_obj = null;
     this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
+    this.map_lines = [];
     this.marker_res = {};
     
     this.infoWindow = null;
@@ -101,6 +102,12 @@ EasyMap.prototype = {
     },
     getMarkerIndex: function(marker){
         return this.map_markers.indexOf(marker);
+    },
+    newLine: function(){
+        this.map_lines.push(new EasyLine(null, this));
+    },
+    getCurrentLine: function(){
+        return this.map_lines[this.map_lines.length - 1];
     }
 }
 
