@@ -1,0 +1,30 @@
+body {
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+	margin:0px 0px 0px 0px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
+}
+
+.main-menu {
+	position: static;
+	width: 100%;
+	height: 65px;
+	background-color: #3498db;
+	z-index: 1;
+}
+
+.logo {
+	margin-top: -16px;
+}
+
+.searching {
+	width: 100%;
+	height: 100px;
+	background-color: transparent;
+}
+
+@media (max-width: 996px) {
+	.searching {
+		height: 155px;
+	}
+}
