@@ -19,6 +19,7 @@ function EasyMap(config){
     this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
     this.map_lines = [];
+    this.map_shapes = [];
     this.marker_res = {};
     
     this.infoWindow = null;
@@ -108,6 +109,11 @@ EasyMap.prototype = {
     },
     getCurrentLine: function(){
         return this.map_lines[this.map_lines.length - 1];
+    },
+    newPolygon: function(pts){
+        this.map_shapes.push(new EasyShape({
+            points: pts
+        }, this));
     }
 }
 

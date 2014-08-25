@@ -49,10 +49,26 @@
             });
 			marker.setInfoContent('Holiwis :3');
             
+            var marker = map.addMarker({
+                latitude: 13.725449,
+                longitude: -89.489938,
+                title: 'Holiwis :3',
+                icon: 'test'
+            });
+			marker.setInfoContent('Asustado o.O');
+            
             map.newLine();
             var line = map.getCurrentLine();
             line.addPoint(13.685449, -89.239938);
             line.addPoint(13.785449, -89.439938);
+            
+            var points = [
+                new google.maps.LatLng(13.685449, -89.239938),
+                new google.maps.LatLng(13.785449, -89.439938),
+                new google.maps.LatLng(13.725449, -89.489938)
+            ];
+            
+            map.newPolygon(points);
 		}
     </script>
   </head>
