@@ -16,14 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
  
  function EasyLine(config, map){
-    //this.strokeColor = config.stroke;
-    //this.strokeOpacity = config.opacity;
-    //this.strokeWeight = config.weight;
+    this.strokeColor = config.stroke;
+    this.strokeOpacity = config.opacity;
+    this.strokeWeight = config.weight;
     
     this.map = map.map_obj;
     this.route = new google.maps.MVCArray();
     this.polyline = new google.maps.Polyline({
-        path: this.route
+        path: this.route,
+        strokeColor: this.strokeColor,
+        strokeWeight: this.strokeWeight,
+        strokeOpacity: this.strokeOpacity
     });
     this.setMap(this.map);
 }
@@ -81,6 +84,13 @@ EasyLineProperties.prototype = {
     },
     getDefaultWeight: function(){
         return this.strokeWeight;
+    },
+    makeConfig: function(){
+        return {
+            stroke: this.strokeColor,
+            opacity: this.strokeOpacity,
+            weight: this.strokeWeight
+        };
     }
 }
 
@@ -195,7 +205,7 @@ EasyMap.prototype = {
         return this.map_markers.indexOf(marker);
     },
     newLine: function(){
-        this.map_lines.push(new EasyLine(null, this));
+        this.map_lines.push(new EasyLine(this.default_line_props.makeConfig(), this));
     },
     getCurrentLine: function(){
         return this.map_lines[this.map_lines.length - 1];

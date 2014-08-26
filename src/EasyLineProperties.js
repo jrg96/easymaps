@@ -38,5 +38,12 @@ EasyLineProperties.prototype = {
     },
     getDefaultWeight: function(){
         return this.strokeWeight;
+    },
+    makeConfig: function(){
+        return {
+            stroke: this.strokeColor,
+            opacity: this.strokeOpacity,
+            weight: this.strokeWeight
+        };
     }
 }

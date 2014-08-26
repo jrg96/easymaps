@@ -107,7 +107,7 @@ EasyMap.prototype = {
         return this.map_markers.indexOf(marker);
     },
     newLine: function(){
-        this.map_lines.push(new EasyLine(null, this));
+        this.map_lines.push(new EasyLine(this.default_line_props.makeConfig(), this));
     },
     getCurrentLine: function(){
         return this.map_lines[this.map_lines.length - 1];
