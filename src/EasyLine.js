@@ -14,6 +14,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
  
  function EasyLine(config, map){
+    //this.strokeColor = config.stroke;
+    //this.strokeOpacity = config.opacity;
+    //this.strokeWeight = config.weight;
+    
     this.map = map.map_obj;
     this.route = new google.maps.MVCArray();
     this.polyline = new google.maps.Polyline({

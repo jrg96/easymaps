@@ -16,6 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
  
  function EasyLine(config, map){
+    //this.strokeColor = config.stroke;
+    //this.strokeOpacity = config.opacity;
+    //this.strokeWeight = config.weight;
+    
     this.map = map.map_obj;
     this.route = new google.maps.MVCArray();
     this.polyline = new google.maps.Polyline({
@@ -32,6 +36,51 @@ EasyLine.prototype = {
     },
     addPoint: function(latitude, longitude){
         this.route.push(new google.maps.LatLng(latitude, longitude));
+    }
+}
+
+// --- file[EasyLineProperties.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+ function EasyLineProperties(config){
+    this.strokeColor = ((config.stroke != null) ? config.stroke : '#FF0000');
+    this.strokeOpacity = ((config.opacity != null) ? config.opacity : 1.0);
+    this.strokeWeight = ((config.weight != null) ? config.weight : 5);
+}
+
+EasyLineProperties.prototype = {
+    constructor: EasyLineProperties,
+    setDefaultStroke: function(stroke){
+        this.strokeColor = stroke;
+    },
+    getDefaultStroke: function(){
+        return this.strokeColor;
+    },
+    setDefaultOpacity: function(opacity){
+        this.strokeOpacity = opacity;
+    },
+    getDefaultOpacity: function(){
+        return this.strokeOpacity;
+    },
+    setDefaultWeight: function(weight){
+        this.strokeWeight = weight;
+    },
+    getDefaultWeight: function(){
+        return this.strokeWeight;
     }
 }
 
@@ -60,6 +109,8 @@ function EasyMap(config){
     this.map_lines = [];
     this.map_shapes = [];
     this.marker_res = {};
+    
+    this.default_line_props = new EasyLineProperties({});
     
     this.infoWindow = null;
     
@@ -159,6 +210,8 @@ EasyMap.prototype = {
 EasyMap.InfoWindowSystem = {NONE_WINDOW : 0,
                             ONE_WINDOW: 1,
                             MULTIPLE_WINDOW : 2};
+                            
+
 
 
 // --- file[EasyMarker.js] ---

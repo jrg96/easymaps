@@ -22,6 +22,8 @@ function EasyMap(config){
     this.map_shapes = [];
     this.marker_res = {};
     
+    this.default_line_props = new EasyLineProperties({});
+    
     this.infoWindow = null;
     
     this.marker_callback = null;
@@ -120,3 +122,5 @@ EasyMap.prototype = {
 EasyMap.InfoWindowSystem = {NONE_WINDOW : 0,
                             ONE_WINDOW: 1,
                             MULTIPLE_WINDOW : 2};
+                            
+
