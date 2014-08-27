@@ -133,6 +133,7 @@ function EasyMap(config){
     };
     
     this.map_obj = new google.maps.Map(this.map_el, this.map_options);
+    this.map_clusterer = new MarkerClusterer(this.map_obj);
     
     this.initInfoWindowSystem();
 }
@@ -189,6 +190,12 @@ EasyMap.prototype = {
         
         return marker;
     },
+    clearAllMarkers: function(){
+        for (var i=0; i<this.map_markers.length; i++){
+            this.map_markers[i].destroy();
+        }
+        this.map_markers = [];
+    },
     addMarkerRes: function(key, value){
         this.marker_res[key] = value;
     },
@@ -201,8 +208,12 @@ EasyMap.prototype = {
     getMarkersCallbackFunc: function(){
         return this.marker_callback;
     },
-    getMarkerIndex: function(marker){
-        return this.map_markers.indexOf(marker);
+    cluster: function(){
+        var markers = [];
+        for (var i=0; i<this.map_markers.length; i++){
+            markers.push(this.map_markers[i].marker);
+        }
+        this.map_clusterer.addMarkers(markers);
     },
     newLine: function(){
         this.map_lines.push(new EasyLine(this.default_line_props.makeConfig(), this));
@@ -285,6 +296,12 @@ EasyMarker.prototype = {
         }
         this.infoWindow.setContent(this.getInfoContent());
         this.infoWindow.open(this.map, this.marker);
+    },
+    hide: function(){
+        this.marker.setMap(null);
+    },
+    destroy: function(){
+        this.hide();
     }
 }
 

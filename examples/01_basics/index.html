@@ -13,6 +13,7 @@
     <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBYuhiS0SauIzg3yLxlsIlF4knSwrIW_cU&sensor=true">
     </script>
+    <script src="markerclusterer_compiled.js"></script>
     <script src="easymaps.min.js"></script>
     <script type="text/javascript">
         var map = null;
@@ -35,6 +36,14 @@
             
             var marker = map.addMarker({
                 latitude: 13.685449,
+                longitude: -89.239938,
+                title: 'Hola desde casa presidencial :D',
+                icon: 'test'
+            });
+			marker.setInfoContent('Hola desde casa presidencial :D');
+            
+            var marker = map.addMarker({
+                latitude: 13.693449,
                 longitude: -89.239938,
                 title: 'Hola desde casa presidencial :D',
                 icon: 'test'
@@ -69,6 +78,8 @@
             ];
             
             map.newPolygon(points);
+            
+            map.cluster();
 		}
     </script>
   </head>
