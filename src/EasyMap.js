@@ -117,6 +117,14 @@ EasyMap.prototype = {
         }
         this.map_clusterer.addMarkers(markers);
     },
+    decluster: function(){
+        var markers = this.map_clusterer.getMarkers();
+        this.map_clusterer.clearMarkers();
+        
+        for (var i=0; i<markers.length; i++){
+            markers[i].setMap(this.map_obj);
+        }
+    },
     newLine: function(){
         this.map_lines.push(new EasyLine(this.default_line_props.makeConfig(), this));
     },
