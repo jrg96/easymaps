@@ -57,5 +57,11 @@ EasyMarker.prototype = {
         }
         this.infoWindow.setContent(this.getInfoContent());
         this.infoWindow.open(this.map, this.marker);
+    },
+    hide: function(){
+        this.marker.setMap(null);
+    },
+    destroy: function(){
+        this.hide();
     }
 }

@@ -189,6 +189,12 @@ EasyMap.prototype = {
         
         return marker;
     },
+    clearAllMarkers: function(){
+        for (var i=0; i<this.map_markers.length; i++){
+            this.map_markers[i].destroy();
+        }
+        this.map_markers = [];
+    },
     addMarkerRes: function(key, value){
         this.marker_res[key] = value;
     },
@@ -285,6 +291,12 @@ EasyMarker.prototype = {
         }
         this.infoWindow.setContent(this.getInfoContent());
         this.infoWindow.open(this.map, this.marker);
+    },
+    hide: function(){
+        this.marker.setMap(null);
+    },
+    destroy: function(){
+        this.hide();
     }
 }
 

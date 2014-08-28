@@ -91,6 +91,12 @@ EasyMap.prototype = {
         
         return marker;
     },
+    clearAllMarkers: function(){
+        for (var i=0; i<this.map_markers.length; i++){
+            this.map_markers[i].destroy();
+        }
+        this.map_markers = [];
+    },
     addMarkerRes: function(key, value){
         this.marker_res[key] = value;
     },
