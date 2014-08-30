@@ -24,14 +24,14 @@ EasyMapStyleManager.prototype = {
         var styledMap = new google.maps.StyledMapType(config.style);
         this.styledMaps[config.name] = styledMap;
         
-        this.map.setOptions({mapTypeControlOptions: {mapTypeIds: this.makeMapTypeIds()}});
+        var arrMapTypeIds = this.makeMapTypeIds();
+        this.map.setOptions({mapTypeControlOptions: {mapTypeIds: arrMapTypeIds}});
         
-        for (var i=1; i<this.map.map_options.mapTypeControlOptions.mapTypeIds.length; i++){
-            var key = this.map.map_options.mapTypeControlOptions.mapTypeIds[i];
+        for (var i=1; i<arrMapTypeIds.length; i++){
+            var key = arrMapTypeIds[i];
             var value = this.styledMaps[key];
             
             this.map.mapTypes.set(key, value);
-            
         }
     },
     makeMapTypeIds: function(){

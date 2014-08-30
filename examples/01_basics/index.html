@@ -30,6 +30,20 @@
                 zoom: 10,
                 infoWindowSystem: EasyMap.InfoWindowSystem.ONE_WINDOW
             });
+            
+            var bluishStyle = [
+                {
+                    stylers: [
+                        { hue: "#009999" },
+                        { saturation: -5 },
+                        { lightness: -40 }
+                    ]
+                }
+            ];
+            
+            map.map_style_manager.addStyleMap({name: 'bluish_style', style: bluishStyle});
+            map.map_obj.setMapTypeId('bluish_style');
+            
             map.setMarkersCallbackFunc(marker_callback);
             //map.changeToRoadmap();
             map.addMarkerRes('test', 'http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png');

@@ -122,6 +122,8 @@ function EasyMap(config){
     
     this.default_line_props = new EasyLineProperties({});
     
+    this.current_maptypeid = ((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP);
+    
     this.infoWindow = null;
     
     this.marker_callback = null;
@@ -129,11 +131,15 @@ function EasyMap(config){
     this.map_options = {
         center: new google.maps.LatLng(config.latitude, config.longitude),
         zoom: ((config.zoom != null) ? config.zoom : 15),
-        mapTypeId: ((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP)
+        mapTypeId: this.current_maptypeid
+        /*mapTypeControlOptions: {mapTypeIds:
+            [((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP)]
+        }*/
     };
     
     this.map_obj = new google.maps.Map(this.map_el, this.map_options);
     this.map_clusterer = new MarkerClusterer(this.map_obj);
+    this.map_style_manager = new EasyMapStyleManager({map: this.map_obj});
     
     this.initInfoWindowSystem();
 }
@@ -161,9 +167,11 @@ EasyMap.prototype = {
     },
     changeToRoadmap: function(){
         this.map_obj.setMapTypeId(google.maps.MapTypeId.google.maps.MapTypeId.ROADMAP);
+        this.current_maptypeid = google.maps.MapTypeId.google.maps.MapTypeId.ROADMAP;
     },
     changeToSatellite: function(){
         this.map_obj.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+        this.current_maptypeid = google.maps.MapTypeId.SATELLITE;
     },
     addMarker: function(config){
         var parent = this;
@@ -313,6 +321,59 @@ EasyMarker.prototype = {
     }
 }
 
+
+// --- file[EasyMapStyleManager.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+function EasyMapStyleManager(config){
+    this.styledMaps = {};
+    this.map = config.map;
+}
+ 
+EasyMapStyleManager.prototype = {
+    constructor: EasyMapStyleManager,
+    addStyleMap: function(config){
+        var styledMap = new google.maps.StyledMapType(config.style);
+        this.styledMaps[config.name] = styledMap;
+        
+        var arrMapTypeIds = this.makeMapTypeIds();
+        this.map.setOptions({mapTypeControlOptions: {mapTypeIds: arrMapTypeIds}});
+        
+        for (var i=1; i<arrMapTypeIds.length; i++){
+            var key = arrMapTypeIds[i];
+            var value = this.styledMaps[key];
+            
+            this.map.mapTypes.set(key, value);
+        }
+    },
+    makeMapTypeIds: function(){
+        var array = [];
+        
+        array.push(this.map.current_maptypeid);
+
+        for (var key in this.styledMaps) {
+            if (this.styledMaps.hasOwnProperty(key)) {
+                array.push(key);
+            }
+        }
+        
+        return array;
+    }
+}
 
 // --- file[EasyShape.js] ---
 
