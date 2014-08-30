@@ -23,7 +23,30 @@ EasyMapStyleManager.prototype = {
     addStyleMap: function(config){
         var styledMap = new google.maps.StyledMapType(config.style);
         this.styledMaps[config.name] = styledMap;
+        this.updateMapTypeIds();
+    },
+    addImageMap: function(config){
+        var tile = null;
         
+        if (config.tileSize != null){
+            tile = new google.maps.Size(config.tileSize[0], config.tileSize[1]);
+        } else{
+            tile = new google.maps.Size(256, 256);
+        }
+        
+        var imgMap = new google.maps.ImageMapType({
+            getTileUrl: function(coord, zoom){
+                return config.callback(coord, zoom);
+            },
+            tileSize: tile,
+            name: ((config.title != null) ? config.title : ''),
+            maxZoom: ((config.maxZoom != null) ? config.maxZoom : 18)
+        });
+        
+        this.styledMaps[config.name] = imgMap;
+        this.updateMapTypeIds();
+    },
+    updateMapTypeIds: function(){
         var arrMapTypeIds = this.makeMapTypeIds();
         this.map.setOptions({mapTypeControlOptions: {mapTypeIds: arrMapTypeIds}});
         

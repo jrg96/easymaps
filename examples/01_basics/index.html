@@ -21,6 +21,10 @@
         function marker_callback(marker){
 			marker.showInfoWindow();
         }
+        
+        function osmCallback(coord, zoom){
+            return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
+        }
 		
 		function initialize() {
             map = new EasyMap({
@@ -40,6 +44,17 @@
                     ]
                 }
             ];
+            
+            
+            // Add different img resources (Open Street Map)
+            
+            /*map.map_style_manager.addImageMap({
+                tileSize: [256, 256],
+                callback: osmCallback,
+                name: 'open_street_maps'
+            });
+            
+            map.map_obj.setMapTypeId('open_street_maps');*/
             
             map.map_style_manager.addStyleMap({name: 'bluish_style', style: bluishStyle});
             map.map_obj.setMapTypeId('bluish_style');

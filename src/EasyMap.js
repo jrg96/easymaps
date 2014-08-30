@@ -34,9 +34,6 @@ function EasyMap(config){
         center: new google.maps.LatLng(config.latitude, config.longitude),
         zoom: ((config.zoom != null) ? config.zoom : 15),
         mapTypeId: this.current_maptypeid
-        /*mapTypeControlOptions: {mapTypeIds:
-            [((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP)]
-        }*/
     };
     
     this.map_obj = new google.maps.Map(this.map_el, this.map_options);
