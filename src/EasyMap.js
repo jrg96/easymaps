@@ -24,6 +24,8 @@ function EasyMap(config){
     
     this.default_line_props = new EasyLineProperties({});
     
+    this.current_maptypeid = ((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP);
+    
     this.infoWindow = null;
     
     this.marker_callback = null;
@@ -31,7 +33,10 @@ function EasyMap(config){
     this.map_options = {
         center: new google.maps.LatLng(config.latitude, config.longitude),
         zoom: ((config.zoom != null) ? config.zoom : 15),
-        mapTypeId: ((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP)
+        mapTypeId: this.current_maptypeid
+        /*mapTypeControlOptions: {mapTypeIds:
+            [((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP)]
+        }*/
     };
     
     this.map_obj = new google.maps.Map(this.map_el, this.map_options);
@@ -63,9 +68,11 @@ EasyMap.prototype = {
     },
     changeToRoadmap: function(){
         this.map_obj.setMapTypeId(google.maps.MapTypeId.google.maps.MapTypeId.ROADMAP);
+        this.current_maptypeid = google.maps.MapTypeId.google.maps.MapTypeId.ROADMAP;
     },
     changeToSatellite: function(){
         this.map_obj.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+        this.current_maptypeid = google.maps.MapTypeId.SATELLITE;
     },
     addMarker: function(config){
         var parent = this;
