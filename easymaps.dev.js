@@ -292,7 +292,8 @@ EasyMapStyleManager.prototype = {
             },
             tileSize: tile,
             name: ((config.title != null) ? config.title : ''),
-            maxZoom: ((config.maxZoom != null) ? config.maxZoom : 18)
+            maxZoom: ((config.maxZoom != null) ? config.maxZoom : 18),
+            opacity: ((config.opacity != null) ? config.opacity : 1.0)
         });
         
         this.styledMaps[config.name] = imgMap;
