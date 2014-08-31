@@ -20,5 +20,19 @@ function EasyExternalResource(config){
 }
  
 EasyExternalResource.prototype = {
-    constructor: EasyExternalResource
+    constructor: EasyExternalResource,
+    addGeoRSSLayer: function(config){
+        this.geoRssResources[config.name] = new google.maps.KmlLayer(config.url);
+    },
+    addKMLLayer: function(config){
+        this.kmlResources[config.name] = new google.maps.KmlLayer(config.url);
+    },
+    setGeoRSS: function(name){
+        var geoRSS = this.geoRssResources[name];
+        geoRSS.setMap(this.map);
+    },
+    setKML: function(name){
+        var KML = this.kmlResources[name];
+        KML.setMap(this.map);
+    }
 }
