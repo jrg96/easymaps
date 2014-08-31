@@ -48,13 +48,18 @@
             
             // Add different img resources (Open Street Map)
             
-            /*map.map_style_manager.addImageMap({
+            map.map_style_manager.addImageMap({
                 tileSize: [256, 256],
                 callback: osmCallback,
                 name: 'open_street_maps'
             });
             
-            map.map_obj.setMapTypeId('open_street_maps');*/
+            //change to open street maps
+            //map.map_obj.setMapTypeId('open_street_maps');
+            
+            //overlay open street maps
+            //map.map_style_manager.setOverlay(0, 'open_street_maps');
+            
             
             map.map_style_manager.addStyleMap({name: 'bluish_style', style: bluishStyle});
             map.map_obj.setMapTypeId('bluish_style');

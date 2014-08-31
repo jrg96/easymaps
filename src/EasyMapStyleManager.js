@@ -69,5 +69,8 @@ EasyMapStyleManager.prototype = {
         }
         
         return array;
+    },
+    setOverlay: function(i, name){
+        this.map.overlayMapTypes.insertAt(i, this.styledMaps[name]);
     }
 }
