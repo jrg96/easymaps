@@ -54,7 +54,7 @@
                 name: 'open_street_maps'
             });
             
-            map.getExtResourceManager().addKMLLayer({name: 'kml_earthquake', url: 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month_depth.kml'});
+            map.getExtResourceManager().addSource({name: 'kml_earthquake', url: 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month_depth.kml'});
             
             //change to open street maps
             //map.map_obj.setMapTypeId('open_street_maps');
@@ -118,7 +118,7 @@
             map.cluster();
             map.decluster();
             
-            map.getExtResourceManager().setKML('kml_earthquake');
+            map.getExtResourceManager().setSource('kml_earthquake');
 		}
     </script>
   </head>

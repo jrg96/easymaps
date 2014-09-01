@@ -274,25 +274,17 @@ EasyMap.InfoWindowSystem = {NONE_WINDOW : 0,
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
  
 function EasyExternalResource(config){
-    this.kmlResources = {};
-    this.geoRssResources = {};
+    this.resources = {};
     this.map = config.map;
 }
  
 EasyExternalResource.prototype = {
     constructor: EasyExternalResource,
-    addGeoRSSLayer: function(config){
-        this.geoRssResources[config.name] = new google.maps.KmlLayer(config.url);
+    addSource: function(config){
+        this.resources[config.name] = new google.maps.KmlLayer(config.url);
     },
-    addKMLLayer: function(config){
-        this.kmlResources[config.name] = new google.maps.KmlLayer(config.url);
-    },
-    setGeoRSS: function(name){
-        var geoRSS = this.geoRssResources[name];
-        geoRSS.setMap(this.map);
-    },
-    setKML: function(name){
-        var KML = this.kmlResources[name];
+    setSource: function(name){
+        var KML = this.resources[name];
         KML.setMap(this.map);
     }
 }
