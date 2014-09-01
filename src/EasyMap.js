@@ -38,7 +38,9 @@ function EasyMap(config){
     
     this.map_obj = new google.maps.Map(this.map_el, this.map_options);
     this.map_clusterer = new MarkerClusterer(this.map_obj);
+    
     this.map_style_manager = new EasyMapStyleManager({map: this.map_obj});
+    this.map_ext_src = new EasyExternalResource({map: this.map_obj});
     
     this.initInfoWindowSystem();
 }
@@ -140,6 +142,12 @@ EasyMap.prototype = {
         this.map_shapes.push(new EasyShape({
             points: pts
         }, this));
+    },
+    getStyleManager: function(){
+        return this.map_style_manager;
+    },
+    getExtResourceManager: function(){
+        return this.map_ext_src;
     }
 }
 

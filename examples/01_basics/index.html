@@ -48,20 +48,22 @@
             
             // Add different img resources (Open Street Map)
             
-            map.map_style_manager.addImageMap({
+            map.getStyleManager().addImageMap({
                 tileSize: [256, 256],
                 callback: osmCallback,
                 name: 'open_street_maps'
             });
             
+            map.getExtResourceManager().addKMLLayer({name: 'kml_earthquake', url: 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month_depth.kml'});
+            
             //change to open street maps
             //map.map_obj.setMapTypeId('open_street_maps');
             
             //overlay open street maps
-            //map.map_style_manager.setOverlay(0, 'open_street_maps');
+            //map.getStyleManager().setOverlay(0, 'open_street_maps');
             
             
-            map.map_style_manager.addStyleMap({name: 'bluish_style', style: bluishStyle});
+            map.getStyleManager().addStyleMap({name: 'bluish_style', style: bluishStyle});
             map.map_obj.setMapTypeId('bluish_style');
             
             map.setMarkersCallbackFunc(marker_callback);
@@ -115,6 +117,8 @@
             
             map.cluster();
             map.decluster();
+            
+            map.getExtResourceManager().setKML('kml_earthquake');
 		}
     </script>
   </head>
