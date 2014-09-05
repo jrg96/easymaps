@@ -22,6 +22,9 @@ function EasyMap(config){
     this.map_shapes = [];
     this.marker_res = {};
     
+    this.logo_div;
+    this.logo_img;
+    
     this.default_line_props = new EasyLineProperties({});
     
     this.current_maptypeid = ((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP);
@@ -148,6 +151,20 @@ EasyMap.prototype = {
     },
     getExtResourceManager: function(){
         return this.map_ext_src;
+    },
+    setLogo: function(path){
+        this.removeLogo();
+        this.logo_div = document.createElement('div');
+        this.logo_img = document.createElement('img');
+        this.logo_img.src = path;
+        this.logo_img.id = 'CompanyLogo';
+        this.logo_div.appendChild(this.logo_img);
+        this.map_obj.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(this.logo_div);
+    },
+    removeLogo: function(){
+        if (this.logo_div != null){
+            this.map_obj.controls[google.maps.ControlPosition.LEFT_BOTTOM].pop();
+        }
     }
 }
 

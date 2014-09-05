@@ -120,6 +120,9 @@ function EasyMap(config){
     this.map_shapes = [];
     this.marker_res = {};
     
+    this.logo_div;
+    this.logo_img;
+    
     this.default_line_props = new EasyLineProperties({});
     
     this.current_maptypeid = ((config.mapTypeId != null) ? config.mapTypeId : google.maps.MapTypeId.ROADMAP);
@@ -246,6 +249,20 @@ EasyMap.prototype = {
     },
     getExtResourceManager: function(){
         return this.map_ext_src;
+    },
+    setLogo: function(path){
+        this.removeLogo();
+        this.logo_div = document.createElement('div');
+        this.logo_img = document.createElement('img');
+        this.logo_img.src = path;
+        this.logo_img.id = 'CompanyLogo';
+        this.logo_div.appendChild(this.logo_img);
+        this.map_obj.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(this.logo_div);
+    },
+    removeLogo: function(){
+        if (this.logo_div != null){
+            this.map_obj.controls[google.maps.ControlPosition.LEFT_BOTTOM].pop();
+        }
     }
 }
 
@@ -254,6 +271,77 @@ EasyMap.InfoWindowSystem = {NONE_WINDOW : 0,
                             MULTIPLE_WINDOW : 2};
                             
 
+
+
+// --- file[EasyMarker.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+function EasyMarker(config, map){
+    this.latitude = config.latitude;
+    this.longitude = config.longitude;
+    this.title = ((config.title != null) ? config.title : '');
+    this.map = map.map_obj;
+    this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
+    this.marker = null;
+    this.metadata = null;
+    this.content = null;
+    this.infoWindow = null;
+    this.initMarker();
+}
+ 
+EasyMarker.prototype = {
+    constructor: EasyMarker,
+    initMarker: function(){
+        this.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(this.latitude, this.longitude),
+            map: this.map,
+            title: this.title,
+            icon: this.icon
+        });
+    },
+    setMetadata: function(metadata){
+        this.metadata = metadata;
+    },
+    getMetadata: function(){
+        return this.metadata;
+    },
+    setInfoContent: function(content){
+        this.content = content;
+    },
+    getInfoContent: function(){
+        return this.content;
+    },
+    setInfoWindow: function(window){
+        this.infoWindow = window;
+    },
+    showInfoWindow: function(value){
+        if (value != null){
+            this.content = value;
+        }
+        this.infoWindow.setContent(this.getInfoContent());
+        this.infoWindow.open(this.map, this.marker);
+    },
+    hide: function(){
+        this.marker.setMap(null);
+    },
+    destroy: function(){
+        this.hide();
+    }
+}
 
 
 // --- file[EasyMapExternalResource.js] ---
@@ -368,77 +456,6 @@ EasyMapStyleManager.prototype = {
         this.map.overlayMapTypes.insertAt(i, this.styledMaps[name]);
     }
 }
-
-// --- file[EasyMarker.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
-function EasyMarker(config, map){
-    this.latitude = config.latitude;
-    this.longitude = config.longitude;
-    this.title = ((config.title != null) ? config.title : '');
-    this.map = map.map_obj;
-    this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
-    this.marker = null;
-    this.metadata = null;
-    this.content = null;
-    this.infoWindow = null;
-    this.initMarker();
-}
- 
-EasyMarker.prototype = {
-    constructor: EasyMarker,
-    initMarker: function(){
-        this.marker = new google.maps.Marker({
-            position: new google.maps.LatLng(this.latitude, this.longitude),
-            map: this.map,
-            title: this.title,
-            icon: this.icon
-        });
-    },
-    setMetadata: function(metadata){
-        this.metadata = metadata;
-    },
-    getMetadata: function(){
-        return this.metadata;
-    },
-    setInfoContent: function(content){
-        this.content = content;
-    },
-    getInfoContent: function(){
-        return this.content;
-    },
-    setInfoWindow: function(window){
-        this.infoWindow = window;
-    },
-    showInfoWindow: function(value){
-        if (value != null){
-            this.content = value;
-        }
-        this.infoWindow.setContent(this.getInfoContent());
-        this.infoWindow.open(this.map, this.marker);
-    },
-    hide: function(){
-        this.marker.setMap(null);
-    },
-    destroy: function(){
-        this.hide();
-    }
-}
-
 
 // --- file[EasyShape.js] ---
 
