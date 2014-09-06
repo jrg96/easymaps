@@ -13,6 +13,7 @@
     <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBYuhiS0SauIzg3yLxlsIlF4knSwrIW_cU&sensor=true">
     </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="markerclusterer_compiled.js"></script>
     <script src="easymaps.min.js"></script>
     <script type="text/javascript">
@@ -122,6 +123,10 @@
             map.setLogo('logo.png');
             map.removeLogo();
             map.setLogo('logo.png');
+            map.loadGeoJSON('google.json', function(){
+                map.map_geojson.changeStyleByProperty('letter', 'G', {fillColor: 'blue', fillOpacity: 1.0});
+                map.map_geojson.changeStyleByProperty('letter', 'o', {fillColor: 'red', fillOpacity: 1.0});
+            });
 		}
     </script>
   </head>

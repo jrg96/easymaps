@@ -44,6 +44,7 @@ function EasyMap(config){
     
     this.map_style_manager = new EasyMapStyleManager({map: this.map_obj});
     this.map_ext_src = new EasyExternalResource({map: this.map_obj});
+    this.map_geojson = new EasyGeoJSON({map: this.map_obj});
     
     this.initInfoWindowSystem();
 }
@@ -151,6 +152,14 @@ EasyMap.prototype = {
     },
     getExtResourceManager: function(){
         return this.map_ext_src;
+    },
+    loadGeoJSON: function(url, callback){
+        var parent = this;
+        
+        $.getJSON(url, function(data) {
+            parent.map_geojson.addGeoJSON(data);
+            callback();
+        });
     },
     setLogo: function(path){
         this.removeLogo();
