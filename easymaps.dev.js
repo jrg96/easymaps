@@ -50,6 +50,50 @@
     }
  }
 
+// --- file[EasyLine.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+ function EasyLine(config, map){
+    this.strokeColor = config.stroke;
+    this.strokeOpacity = config.opacity;
+    this.strokeWeight = config.weight;
+    
+    this.map = map.map_obj;
+    this.route = new google.maps.MVCArray();
+    this.polyline = new google.maps.Polyline({
+        path: this.route,
+        strokeColor: this.strokeColor,
+        strokeWeight: this.strokeWeight,
+        strokeOpacity: this.strokeOpacity
+    });
+    this.setMap(this.map);
+}
+
+EasyLine.prototype = {
+    constructor: EasyLine,
+    setMap: function(map){
+        this.map = map;
+        this.polyline.setMap(this.map);
+    },
+    addPoint: function(latitude, longitude){
+        this.route.push(new google.maps.LatLng(latitude, longitude));
+    }
+}
+
 // --- file[EasyLineProperties.js] ---
 
 /* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
@@ -99,163 +143,6 @@ EasyLineProperties.prototype = {
             opacity: this.strokeOpacity,
             weight: this.strokeWeight
         };
-    }
-}
-
-// --- file[EasyLine.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
- function EasyLine(config, map){
-    this.strokeColor = config.stroke;
-    this.strokeOpacity = config.opacity;
-    this.strokeWeight = config.weight;
-    
-    this.map = map.map_obj;
-    this.route = new google.maps.MVCArray();
-    this.polyline = new google.maps.Polyline({
-        path: this.route,
-        strokeColor: this.strokeColor,
-        strokeWeight: this.strokeWeight,
-        strokeOpacity: this.strokeOpacity
-    });
-    this.setMap(this.map);
-}
-
-EasyLine.prototype = {
-    constructor: EasyLine,
-    setMap: function(map){
-        this.map = map;
-        this.polyline.setMap(this.map);
-    },
-    addPoint: function(latitude, longitude){
-        this.route.push(new google.maps.LatLng(latitude, longitude));
-    }
-}
-
-// --- file[EasyMapExternalResource.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
-function EasyExternalResource(config){
-    this.resources = {};
-    this.map = config.map;
-}
- 
-EasyExternalResource.prototype = {
-    constructor: EasyExternalResource,
-    addSource: function(config){
-        this.resources[config.name] = new google.maps.KmlLayer(config.url);
-    },
-    setSource: function(name){
-        var KML = this.resources[name];
-        KML.setMap(this.map);
-    }
-}
-
-// --- file[EasyMapStyleManager.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
-function EasyMapStyleManager(config){
-    this.styledMaps = {};
-    this.map = config.map;
-}
- 
-EasyMapStyleManager.prototype = {
-    constructor: EasyMapStyleManager,
-    addStyleMap: function(config){
-        var styledMap = new google.maps.StyledMapType(config.style);
-        this.styledMaps[config.name] = styledMap;
-        this.updateMapTypeIds();
-    },
-    addImageMap: function(config){
-        var tile = null;
-        
-        if (config.tileSize != null){
-            tile = new google.maps.Size(config.tileSize[0], config.tileSize[1]);
-        } else{
-            tile = new google.maps.Size(256, 256);
-        }
-        
-        var imgMap = new google.maps.ImageMapType({
-            getTileUrl: function(coord, zoom){
-                return config.callback(coord, zoom);
-            },
-            tileSize: tile,
-            name: ((config.title != null) ? config.title : ''),
-            maxZoom: ((config.maxZoom != null) ? config.maxZoom : 18),
-            opacity: ((config.opacity != null) ? config.opacity : 1.0)
-        });
-        
-        this.styledMaps[config.name] = imgMap;
-        this.updateMapTypeIds();
-    },
-    updateMapTypeIds: function(){
-        var arrMapTypeIds = this.makeMapTypeIds();
-        this.map.setOptions({mapTypeControlOptions: {mapTypeIds: arrMapTypeIds}});
-        
-        for (var i=1; i<arrMapTypeIds.length; i++){
-            var key = arrMapTypeIds[i];
-            var value = this.styledMaps[key];
-            
-            this.map.mapTypes.set(key, value);
-        }
-    },
-    makeMapTypeIds: function(){
-        var array = [];
-        
-        array.push(this.map.current_maptypeid);
-
-        for (var key in this.styledMaps) {
-            if (this.styledMaps.hasOwnProperty(key)) {
-                array.push(key);
-            }
-        }
-        
-        return array;
-    },
-    setOverlay: function(i, name){
-        this.map.overlayMapTypes.insertAt(i, this.styledMaps[name]);
     }
 }
 
@@ -436,7 +323,13 @@ EasyMap.prototype = {
         } else{
             this.max_zoom_level = ((config.maxZoom != null) ? config.maxZoom : 20);
             this.min_zoom_level = ((config.minZoom != null) ? config.minZoom : 0);
-            this.allowed_map_bounds = ((config.bounds != null) ? config.bounds : null);
+            
+            if (config.bounds != null){
+                this.allowed_map_bounds = new google.maps.LatLngBounds(
+                    new google.maps.LatLng(config.bounds[0][0], config.bounds[0][1]),
+                    new google.maps.LatLng(config.bounds[1][0], config.bounds[1][1])
+                );
+            }
         }
     },
     setLogo: function(path){
@@ -462,6 +355,10 @@ EasyMap.prototype = {
         google.maps.event.addListener(this.map_obj, 'zoom_changed', function(){
             parent._mapZoom();
         });
+        
+        google.maps.event.addListener(this.map_obj, 'click', function(e) {
+            //alert(e.latLng.lat(), e.latLng.lng());
+        });
     },
     _mapDrag: function(){
         this._checkBounds();
@@ -475,6 +372,24 @@ EasyMap.prototype = {
         } else if (this.map_obj.getZoom() < this.min_zoom_level){
             this.map_obj.setZoom(this.min_zoom_level);
         }
+        
+        if(!this.allowed_map_bounds.contains(this.map_obj.getCenter())) {
+            var C = this.map_obj.getCenter();
+            var X = C.lng();
+            var Y = C.lat();
+
+            var AmaxX = this.allowed_map_bounds.getNorthEast().lng();
+            var AmaxY = this.allowed_map_bounds.getNorthEast().lat();
+            var AminX = this.allowed_map_bounds.getSouthWest().lng();
+            var AminY = this.allowed_map_bounds.getSouthWest().lat();
+
+            if (X < AminX) {X = AminX;}
+            if (X > AmaxX) {X = AmaxX;}
+            if (Y < AminY) {Y = AminY;}
+            if (Y > AmaxY) {Y = AmaxY;}
+
+            this.map_obj.setCenter(new google.maps.LatLng(Y,X));
+        }
     }
 }
 
@@ -484,6 +399,119 @@ EasyMap.InfoWindowSystem = {NONE_WINDOW : 0,
                             
 
 
+
+// --- file[EasyMapExternalResource.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+function EasyExternalResource(config){
+    this.resources = {};
+    this.map = config.map;
+}
+ 
+EasyExternalResource.prototype = {
+    constructor: EasyExternalResource,
+    addSource: function(config){
+        this.resources[config.name] = new google.maps.KmlLayer(config.url);
+    },
+    setSource: function(name){
+        var KML = this.resources[name];
+        KML.setMap(this.map);
+    }
+}
+
+// --- file[EasyMapStyleManager.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+function EasyMapStyleManager(config){
+    this.styledMaps = {};
+    this.map = config.map;
+}
+ 
+EasyMapStyleManager.prototype = {
+    constructor: EasyMapStyleManager,
+    addStyleMap: function(config){
+        var styledMap = new google.maps.StyledMapType(config.style);
+        this.styledMaps[config.name] = styledMap;
+        this.updateMapTypeIds();
+    },
+    addImageMap: function(config){
+        var tile = null;
+        
+        if (config.tileSize != null){
+            tile = new google.maps.Size(config.tileSize[0], config.tileSize[1]);
+        } else{
+            tile = new google.maps.Size(256, 256);
+        }
+        
+        var imgMap = new google.maps.ImageMapType({
+            getTileUrl: function(coord, zoom){
+                return config.callback(coord, zoom);
+            },
+            tileSize: tile,
+            name: ((config.title != null) ? config.title : ''),
+            maxZoom: ((config.maxZoom != null) ? config.maxZoom : 18),
+            opacity: ((config.opacity != null) ? config.opacity : 1.0)
+        });
+        
+        this.styledMaps[config.name] = imgMap;
+        this.updateMapTypeIds();
+    },
+    updateMapTypeIds: function(){
+        var arrMapTypeIds = this.makeMapTypeIds();
+        this.map.setOptions({mapTypeControlOptions: {mapTypeIds: arrMapTypeIds}});
+        
+        for (var i=1; i<arrMapTypeIds.length; i++){
+            var key = arrMapTypeIds[i];
+            var value = this.styledMaps[key];
+            
+            this.map.mapTypes.set(key, value);
+        }
+    },
+    makeMapTypeIds: function(){
+        var array = [];
+        
+        array.push(this.map.current_maptypeid);
+
+        for (var key in this.styledMaps) {
+            if (this.styledMaps.hasOwnProperty(key)) {
+                array.push(key);
+            }
+        }
+        
+        return array;
+    },
+    setOverlay: function(i, name){
+        this.map.overlayMapTypes.insertAt(i, this.styledMaps[name]);
+    }
+}
 
 // --- file[EasyMarker.js] ---
 

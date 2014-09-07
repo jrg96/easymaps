@@ -173,7 +173,13 @@ EasyMap.prototype = {
         } else{
             this.max_zoom_level = ((config.maxZoom != null) ? config.maxZoom : 20);
             this.min_zoom_level = ((config.minZoom != null) ? config.minZoom : 0);
-            this.allowed_map_bounds = ((config.bounds != null) ? config.bounds : null);
+            
+            if (config.bounds != null){
+                this.allowed_map_bounds = new google.maps.LatLngBounds(
+                    new google.maps.LatLng(config.bounds[0][0], config.bounds[0][1]),
+                    new google.maps.LatLng(config.bounds[1][0], config.bounds[1][1])
+                );
+            }
         }
     },
     setLogo: function(path){
@@ -199,6 +205,10 @@ EasyMap.prototype = {
         google.maps.event.addListener(this.map_obj, 'zoom_changed', function(){
             parent._mapZoom();
         });
+        
+        google.maps.event.addListener(this.map_obj, 'click', function(e) {
+            //alert(e.latLng.lat(), e.latLng.lng());
+        });
     },
     _mapDrag: function(){
         this._checkBounds();
@@ -211,6 +221,24 @@ EasyMap.prototype = {
             this.map_obj.setZoom(this.max_zoom_level);
         } else if (this.map_obj.getZoom() < this.min_zoom_level){
             this.map_obj.setZoom(this.min_zoom_level);
+        }
+        
+        if(!this.allowed_map_bounds.contains(this.map_obj.getCenter())) {
+            var C = this.map_obj.getCenter();
+            var X = C.lng();
+            var Y = C.lat();
+
+            var AmaxX = this.allowed_map_bounds.getNorthEast().lng();
+            var AmaxY = this.allowed_map_bounds.getNorthEast().lat();
+            var AminX = this.allowed_map_bounds.getSouthWest().lng();
+            var AminY = this.allowed_map_bounds.getSouthWest().lat();
+
+            if (X < AminX) {X = AminX;}
+            if (X > AmaxX) {X = AmaxX;}
+            if (Y < AminY) {Y = AminY;}
+            if (Y > AmaxY) {Y = AmaxY;}
+
+            this.map_obj.setCenter(new google.maps.LatLng(Y,X));
         }
     }
 }
