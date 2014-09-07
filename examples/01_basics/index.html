@@ -36,6 +36,12 @@
                 infoWindowSystem: EasyMap.InfoWindowSystem.ONE_WINDOW
             });
             
+            map.setBounds({
+                enable: true,
+                maxZoom: 10,
+                minZoom: 10
+            });
+            
             var bluishStyle = [
                 {
                     stylers: [
@@ -119,7 +125,7 @@
             map.cluster();
             map.decluster();
             
-            map.getExtResourceManager().setSource('kml_earthquake');
+            //map.getExtResourceManager().setSource('kml_earthquake');
             map.setLogo('logo.png');
             map.removeLogo();
             map.setLogo('logo.png');
