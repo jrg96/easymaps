@@ -24,6 +24,10 @@ function EasyMap(config){
     
     this.logo_div;
     this.logo_img;
+    this.coordinates_div = document.createElement('div');
+    this.coordinates_div.setAttribute('style', 'width: 200px; height: 20px; background-color: #FFFFFF; border-style: solid; border-width: 1px; padding: 2px 5px;');
+    this.coordinates_div.innerHTML = 'Lat/Lng: 0.00 / 0.00';
+    this.coordinates_shown = false;
     
     this.default_line_props = new EasyLineProperties({});
     
@@ -196,6 +200,18 @@ EasyMap.prototype = {
             this.map_obj.controls[google.maps.ControlPosition.LEFT_BOTTOM].pop();
         }
     },
+    showCoordinates: function(){
+        if (!this.coordinates_shown){
+            this.coordinates_shown = true;
+            this.map_obj.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(this.coordinates_div);
+        }
+    },
+    hideCoordinates: function(){
+        if (this.coordinates_shown){
+            this.coordinates_shown = false;
+            this.map_obj.controls[google.maps.ControlPosition.RIGHT_BOTTOM].pop();
+        }
+    },
     _attachMapEvents: function(){
         var parent = this;
         google.maps.event.addListener(this.map_obj, 'drag', function(){
@@ -209,12 +225,22 @@ EasyMap.prototype = {
         google.maps.event.addListener(this.map_obj, 'click', function(e) {
             //alert(e.latLng.lat(), e.latLng.lng());
         });
+        
+        google.maps.event.addListener(this.map_obj, 'mousemove', function(e) {
+            parent._mapMouseMove(e);
+        });
     },
     _mapDrag: function(){
         this._checkBounds();
     },
     _mapZoom: function(){
         this._checkBounds();
+    },
+    _mapMouseMove: function(e){
+        if (this.coordinates_shown){
+            var coordinateText = 'Lat/Lng: ' + e.latLng.lat().toFixed(6) + ' / ' + e.latLng.lng().toFixed(6);
+            this.coordinates_div.innerHTML = coordinateText;
+        }
     },
     _checkBounds: function(){
         if (this.map_obj.getZoom() > this.max_zoom_level){

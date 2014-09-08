@@ -174,6 +174,10 @@ function EasyMap(config){
     
     this.logo_div;
     this.logo_img;
+    this.coordinates_div = document.createElement('div');
+    this.coordinates_div.setAttribute('style', 'width: 200px; height: 20px; background-color: #FFFFFF; border-style: solid; border-width: 1px; padding: 2px 5px;');
+    this.coordinates_div.innerHTML = 'Lat/Lng: 0.00 / 0.00';
+    this.coordinates_shown = false;
     
     this.default_line_props = new EasyLineProperties({});
     
@@ -346,6 +350,18 @@ EasyMap.prototype = {
             this.map_obj.controls[google.maps.ControlPosition.LEFT_BOTTOM].pop();
         }
     },
+    showCoordinates: function(){
+        if (!this.coordinates_shown){
+            this.coordinates_shown = true;
+            this.map_obj.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(this.coordinates_div);
+        }
+    },
+    hideCoordinates: function(){
+        if (this.coordinates_shown){
+            this.coordinates_shown = false;
+            this.map_obj.controls[google.maps.ControlPosition.RIGHT_BOTTOM].pop();
+        }
+    },
     _attachMapEvents: function(){
         var parent = this;
         google.maps.event.addListener(this.map_obj, 'drag', function(){
@@ -359,12 +375,22 @@ EasyMap.prototype = {
         google.maps.event.addListener(this.map_obj, 'click', function(e) {
             //alert(e.latLng.lat(), e.latLng.lng());
         });
+        
+        google.maps.event.addListener(this.map_obj, 'mousemove', function(e) {
+            parent._mapMouseMove(e);
+        });
     },
     _mapDrag: function(){
         this._checkBounds();
     },
     _mapZoom: function(){
         this._checkBounds();
+    },
+    _mapMouseMove: function(e){
+        if (this.coordinates_shown){
+            var coordinateText = 'Lat/Lng: ' + e.latLng.lat().toFixed(6) + ' / ' + e.latLng.lng().toFixed(6);
+            this.coordinates_div.innerHTML = coordinateText;
+        }
     },
     _checkBounds: function(){
         if (this.map_obj.getZoom() > this.max_zoom_level){
@@ -432,6 +458,77 @@ EasyExternalResource.prototype = {
         KML.setMap(this.map);
     }
 }
+
+// --- file[EasyMarker.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+function EasyMarker(config, map){
+    this.latitude = config.latitude;
+    this.longitude = config.longitude;
+    this.title = ((config.title != null) ? config.title : '');
+    this.map = map.map_obj;
+    this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
+    this.marker = null;
+    this.metadata = null;
+    this.content = null;
+    this.infoWindow = null;
+    this.initMarker();
+}
+ 
+EasyMarker.prototype = {
+    constructor: EasyMarker,
+    initMarker: function(){
+        this.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(this.latitude, this.longitude),
+            map: this.map,
+            title: this.title,
+            icon: this.icon
+        });
+    },
+    setMetadata: function(metadata){
+        this.metadata = metadata;
+    },
+    getMetadata: function(){
+        return this.metadata;
+    },
+    setInfoContent: function(content){
+        this.content = content;
+    },
+    getInfoContent: function(){
+        return this.content;
+    },
+    setInfoWindow: function(window){
+        this.infoWindow = window;
+    },
+    showInfoWindow: function(value){
+        if (value != null){
+            this.content = value;
+        }
+        this.infoWindow.setContent(this.getInfoContent());
+        this.infoWindow.open(this.map, this.marker);
+    },
+    hide: function(){
+        this.marker.setMap(null);
+    },
+    destroy: function(){
+        this.hide();
+    }
+}
+
 
 // --- file[EasyMapStyleManager.js] ---
 
@@ -512,77 +609,6 @@ EasyMapStyleManager.prototype = {
         this.map.overlayMapTypes.insertAt(i, this.styledMaps[name]);
     }
 }
-
-// --- file[EasyMarker.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
-function EasyMarker(config, map){
-    this.latitude = config.latitude;
-    this.longitude = config.longitude;
-    this.title = ((config.title != null) ? config.title : '');
-    this.map = map.map_obj;
-    this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
-    this.marker = null;
-    this.metadata = null;
-    this.content = null;
-    this.infoWindow = null;
-    this.initMarker();
-}
- 
-EasyMarker.prototype = {
-    constructor: EasyMarker,
-    initMarker: function(){
-        this.marker = new google.maps.Marker({
-            position: new google.maps.LatLng(this.latitude, this.longitude),
-            map: this.map,
-            title: this.title,
-            icon: this.icon
-        });
-    },
-    setMetadata: function(metadata){
-        this.metadata = metadata;
-    },
-    getMetadata: function(){
-        return this.metadata;
-    },
-    setInfoContent: function(content){
-        this.content = content;
-    },
-    getInfoContent: function(){
-        return this.content;
-    },
-    setInfoWindow: function(window){
-        this.infoWindow = window;
-    },
-    showInfoWindow: function(value){
-        if (value != null){
-            this.content = value;
-        }
-        this.infoWindow.setContent(this.getInfoContent());
-        this.infoWindow.open(this.map, this.marker);
-    },
-    hide: function(){
-        this.marker.setMap(null);
-    },
-    destroy: function(){
-        this.hide();
-    }
-}
-
 
 // --- file[EasyShape.js] ---
 
