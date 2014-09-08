@@ -21,6 +21,7 @@ function EasyMap(config){
     this.map_lines = [];
     this.map_shapes = [];
     this.marker_res = {};
+    this.synced_maps = [];
     
     this.logo_div;
     this.logo_img;
@@ -170,6 +171,15 @@ EasyMap.prototype = {
             callback();
         });
     },
+    addSyncMap: function(map){
+        this.synced_maps.push(map);
+    },
+    removeSyncMap: function(map){
+        var index = this.synced_maps.indexOf(map);
+        if (index != -1){
+            this.synced_maps.splice(index, 1);
+        }
+    },
     setBounds: function(config){
         if (!config.enable){
             this.allowed_map_bounds = null;
@@ -232,14 +242,26 @@ EasyMap.prototype = {
     },
     _mapDrag: function(){
         this._checkBounds();
+        
+        for (var i=0; i<this.synced_maps.length; i++){
+            this.synced_maps[i].setCenter(this.map_obj.getCenter());
+        }
     },
     _mapZoom: function(){
         this._checkBounds();
+        
+        for (var i=0; i<this.synced_maps.length; i++){
+            this.synced_maps[i].setZoom(this.map_obj.getZoom());
+        }
     },
     _mapMouseMove: function(e){
         if (this.coordinates_shown){
             var coordinateText = 'Lat/Lng: ' + e.latLng.lat().toFixed(6) + ' / ' + e.latLng.lng().toFixed(6);
             this.coordinates_div.innerHTML = coordinateText;
+        }
+        
+        for (var i=0; i<this.synced_maps.length; i++){
+            this.synced_maps[i]._mapMouseMove(e);
         }
     },
     _checkBounds: function(){
