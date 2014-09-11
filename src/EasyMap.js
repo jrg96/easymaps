@@ -271,22 +271,24 @@ EasyMap.prototype = {
             this.map_obj.setZoom(this.min_zoom_level);
         }
         
-        if(!this.allowed_map_bounds.contains(this.map_obj.getCenter())) {
-            var C = this.map_obj.getCenter();
-            var X = C.lng();
-            var Y = C.lat();
+        if (this.allowed_map_bounds != null){
+            if(!this.allowed_map_bounds.contains(this.map_obj.getCenter())) {
+                var C = this.map_obj.getCenter();
+                var X = C.lng();
+                var Y = C.lat();
 
-            var AmaxX = this.allowed_map_bounds.getNorthEast().lng();
-            var AmaxY = this.allowed_map_bounds.getNorthEast().lat();
-            var AminX = this.allowed_map_bounds.getSouthWest().lng();
-            var AminY = this.allowed_map_bounds.getSouthWest().lat();
+                var AmaxX = this.allowed_map_bounds.getNorthEast().lng();
+                var AmaxY = this.allowed_map_bounds.getNorthEast().lat();
+                var AminX = this.allowed_map_bounds.getSouthWest().lng();
+                var AminY = this.allowed_map_bounds.getSouthWest().lat();
 
-            if (X < AminX) {X = AminX;}
-            if (X > AmaxX) {X = AmaxX;}
-            if (Y < AminY) {Y = AminY;}
-            if (Y > AmaxY) {Y = AmaxY;}
+                if (X < AminX) {X = AminX;}
+                if (X > AmaxX) {X = AmaxX;}
+                if (Y < AminY) {Y = AminY;}
+                if (Y > AmaxY) {Y = AmaxY;}
 
-            this.map_obj.setCenter(new google.maps.LatLng(Y,X));
+                this.map_obj.setCenter(new google.maps.LatLng(Y,X));
+            }
         }
     }
 }
