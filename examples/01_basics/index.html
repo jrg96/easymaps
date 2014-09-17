@@ -126,6 +126,9 @@
             map.cluster();
             map.decluster();
             
+            map.map_context.setClass('visibility: hidden; background: #ffffff; border: 1px solid #8888FF; z-index: 10; position: relative; width: 100px; height: 100px; padding: 5px;');
+            map.map_context.setHTML('<a href="javascript:createMarker()">Create Marker Here</a><br><a href="javascript:zoomIn()">Zoom In</a><br><a href="javascript:zoomOut()">Zoom Out</a><br>');
+            
             //map.getExtResourceManager().setSource('kml_earthquake');
             map.setLogo('logo.png');
             map.removeLogo();

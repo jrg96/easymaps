@@ -50,6 +50,7 @@ function EasyMap(config){
     this.map_style_manager = new EasyMapStyleManager({map: this.map_obj});
     this.map_ext_src = new EasyExternalResource({map: this.map_obj});
     this.map_geojson = new EasyGeoJSON({map: this.map_obj});
+    this.map_context = new EasyContextMenu({map: this.map_obj});
     
     this.allowed_map_bounds;
     this.max_zoom_level;
@@ -236,9 +237,18 @@ EasyMap.prototype = {
             //alert(e.latLng.lat(), e.latLng.lng());
         });
         
+        google.maps.event.addListener(this.map_obj, 'rightclick', function(e) {
+            parent._mapRightClick(e);
+        });
+        
         google.maps.event.addListener(this.map_obj, 'mousemove', function(e) {
             parent._mapMouseMove(e);
         });
+    },
+    _mapRightClick: function(e){
+        if (this.map_context.getClass() != null && this.map_context.getHTML() != null){
+            this.map_context.show(e.latLng);
+        }
     },
     _mapDrag: function(){
         this._checkBounds();
