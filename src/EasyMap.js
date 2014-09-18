@@ -223,6 +223,20 @@ EasyMap.prototype = {
             this.map_obj.controls[google.maps.ControlPosition.RIGHT_BOTTOM].pop();
         }
     },
+    setOnUserPosition: function(z){
+        var parent = this;
+        var zoom = ((z != null) ? z : 15);
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                var devCenter = new google.maps.LatLng(lat, lng);
+                parent.map_obj.setCenter(devCenter);
+                parent.map_obj.setZoom(zoom);
+            });
+        }
+    },
     _attachMapEvents: function(){
         var parent = this;
         google.maps.event.addListener(this.map_obj, 'drag', function(){
