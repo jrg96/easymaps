@@ -223,9 +223,10 @@ EasyMap.prototype = {
             this.map_obj.controls[google.maps.ControlPosition.RIGHT_BOTTOM].pop();
         }
     },
-    setOnUserPosition: function(z){
+    setOnUserPosition: function(z, call){
         var parent = this;
         var zoom = ((z != null) ? z : 15);
+        var callback = call;
         
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -234,6 +235,10 @@ EasyMap.prototype = {
                 var devCenter = new google.maps.LatLng(lat, lng);
                 parent.map_obj.setCenter(devCenter);
                 parent.map_obj.setZoom(zoom);
+                
+                if (callback != null){
+                    callback();
+                }
             });
         }
     },
