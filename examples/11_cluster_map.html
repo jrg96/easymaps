@@ -25,7 +25,7 @@
                 infoWindowSystem: EasyMap.InfoWindowSystem.ONE_WINDOW
             });
             
-            map.setOnUserPosition(zoom, function(){
+            map.setOnUserPosition(4, function(){
                 var marker = map.addMarker({
                     latitude: map.getCenter().lat(),
                     longitude: map.getCenter().lng(),
