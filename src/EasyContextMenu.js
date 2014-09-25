@@ -14,7 +14,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
  
  function EasyContextMenu(config){
-    this.className = ((config.className != null) ? config.className : );
+    this.className = ((config.className != null) ? config.className : 
+      'visibility: hidden; background: #ffffff; border: 1px solid #8888FF; z-index: 10; position: relative; width: 100px; height: 100px; padding: 5px;');
     this.innerHTML = ((config.innerHTML != null) ? config.innerHTML : '');
     this.map = config.map;
     this.menuDiv;
