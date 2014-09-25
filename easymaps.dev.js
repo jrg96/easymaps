@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
  
  function EasyContextMenu(config){
-    this.className = ((config.className != null) ? config.className : '');
+    this.className = ((config.className != null) ? config.className : 'visibility: hidden; background: #ffffff; border: 1px solid #8888FF; z-index: 10; position: relative; width: 100px; height: 100px; padding: 5px;');
     this.innerHTML = ((config.innerHTML != null) ? config.innerHTML : '');
     this.map = config.map;
     this.menuDiv;
@@ -165,58 +165,6 @@ EasyLine.prototype = {
     },
     addPoint: function(latitude, longitude){
         this.route.push(new google.maps.LatLng(latitude, longitude));
-    }
-}
-
-// --- file[EasyLineProperties.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
- function EasyLineProperties(config){
-    this.strokeColor = ((config.stroke != null) ? config.stroke : '#FF0000');
-    this.strokeOpacity = ((config.opacity != null) ? config.opacity : 1.0);
-    this.strokeWeight = ((config.weight != null) ? config.weight : 5);
-}
-
-EasyLineProperties.prototype = {
-    constructor: EasyLineProperties,
-    setDefaultStroke: function(stroke){
-        this.strokeColor = stroke;
-    },
-    getDefaultStroke: function(){
-        return this.strokeColor;
-    },
-    setDefaultOpacity: function(opacity){
-        this.strokeOpacity = opacity;
-    },
-    getDefaultOpacity: function(){
-        return this.strokeOpacity;
-    },
-    setDefaultWeight: function(weight){
-        this.strokeWeight = weight;
-    },
-    getDefaultWeight: function(){
-        return this.strokeWeight;
-    },
-    makeConfig: function(){
-        return {
-            stroke: this.strokeColor,
-            opacity: this.strokeOpacity,
-            weight: this.strokeWeight
-        };
     }
 }
 
@@ -586,6 +534,77 @@ EasyExternalResource.prototype = {
     }
 }
 
+// --- file[EasyMarker.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+function EasyMarker(config, map){
+    this.latitude = config.latitude;
+    this.longitude = config.longitude;
+    this.title = ((config.title != null) ? config.title : '');
+    this.map = map.map_obj;
+    this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
+    this.marker = null;
+    this.metadata = null;
+    this.content = null;
+    this.infoWindow = null;
+    this.initMarker();
+}
+ 
+EasyMarker.prototype = {
+    constructor: EasyMarker,
+    initMarker: function(){
+        this.marker = new google.maps.Marker({
+            position: new google.maps.LatLng(this.latitude, this.longitude),
+            map: this.map,
+            title: this.title,
+            icon: this.icon
+        });
+    },
+    setMetadata: function(metadata){
+        this.metadata = metadata;
+    },
+    getMetadata: function(){
+        return this.metadata;
+    },
+    setInfoContent: function(content){
+        this.content = content;
+    },
+    getInfoContent: function(){
+        return this.content;
+    },
+    setInfoWindow: function(window){
+        this.infoWindow = window;
+    },
+    showInfoWindow: function(value){
+        if (value != null){
+            this.content = value;
+        }
+        this.infoWindow.setContent(this.getInfoContent());
+        this.infoWindow.open(this.map, this.marker);
+    },
+    hide: function(){
+        this.marker.setMap(null);
+    },
+    destroy: function(){
+        this.hide();
+    }
+}
+
+
 // --- file[EasyMapStyleManager.js] ---
 
 /* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
@@ -666,77 +685,6 @@ EasyMapStyleManager.prototype = {
     }
 }
 
-// --- file[EasyMarker.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
-function EasyMarker(config, map){
-    this.latitude = config.latitude;
-    this.longitude = config.longitude;
-    this.title = ((config.title != null) ? config.title : '');
-    this.map = map.map_obj;
-    this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
-    this.marker = null;
-    this.metadata = null;
-    this.content = null;
-    this.infoWindow = null;
-    this.initMarker();
-}
- 
-EasyMarker.prototype = {
-    constructor: EasyMarker,
-    initMarker: function(){
-        this.marker = new google.maps.Marker({
-            position: new google.maps.LatLng(this.latitude, this.longitude),
-            map: this.map,
-            title: this.title,
-            icon: this.icon
-        });
-    },
-    setMetadata: function(metadata){
-        this.metadata = metadata;
-    },
-    getMetadata: function(){
-        return this.metadata;
-    },
-    setInfoContent: function(content){
-        this.content = content;
-    },
-    getInfoContent: function(){
-        return this.content;
-    },
-    setInfoWindow: function(window){
-        this.infoWindow = window;
-    },
-    showInfoWindow: function(value){
-        if (value != null){
-            this.content = value;
-        }
-        this.infoWindow.setContent(this.getInfoContent());
-        this.infoWindow.open(this.map, this.marker);
-    },
-    hide: function(){
-        this.marker.setMap(null);
-    },
-    destroy: function(){
-        this.hide();
-    }
-}
-
-
 // --- file[EasyShape.js] ---
 
 /* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
@@ -768,5 +716,57 @@ EasyShape.prototype = {
     setMap: function(map){
         this.map = map;
         this.polygon.setMap(this.map);
+    }
+}
+
+// --- file[EasyLineProperties.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+ function EasyLineProperties(config){
+    this.strokeColor = ((config.stroke != null) ? config.stroke : '#FF0000');
+    this.strokeOpacity = ((config.opacity != null) ? config.opacity : 1.0);
+    this.strokeWeight = ((config.weight != null) ? config.weight : 5);
+}
+
+EasyLineProperties.prototype = {
+    constructor: EasyLineProperties,
+    setDefaultStroke: function(stroke){
+        this.strokeColor = stroke;
+    },
+    getDefaultStroke: function(){
+        return this.strokeColor;
+    },
+    setDefaultOpacity: function(opacity){
+        this.strokeOpacity = opacity;
+    },
+    getDefaultOpacity: function(){
+        return this.strokeOpacity;
+    },
+    setDefaultWeight: function(weight){
+        this.strokeWeight = weight;
+    },
+    getDefaultWeight: function(){
+        return this.strokeWeight;
+    },
+    makeConfig: function(){
+        return {
+            stroke: this.strokeColor,
+            opacity: this.strokeOpacity,
+            weight: this.strokeWeight
+        };
     }
 }
