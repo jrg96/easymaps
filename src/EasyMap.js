@@ -55,7 +55,7 @@ function EasyMap(config){
     this.map_ext_src = new EasyExternalResource({map: this.map_obj});
     this.map_geojson = new EasyGeoJSON({map: this.map_obj});
     this.map_context = new EasyContextMenu({map: this.map_obj});
-	this.geocoder = new google.maps.Geocoder();
+	this.map_geocoder = new EasyGeoCoder({map: this.map_obj, geocoder: new google.maps.Geocoder()});
     
     this.allowed_map_bounds;
     this.max_zoom_level;
@@ -248,12 +248,7 @@ EasyMap.prototype = {
         }
     },
 	reverseGeoCode: function(lat_lng, call){
-		var point = new google.maps.LatLng(lat_lng[0], lat_lng[1]);
-		var callback = call;
-		
-		this.geocoder.geocode({'latLng': point}, function(results, status){
-			callback(results);
-		});
+		this.map_geocoder.reverseGeoCode(lat_lng, call);
 	},
     _attachMapEvents: function(){
         var parent = this;
