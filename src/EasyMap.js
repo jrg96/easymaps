@@ -55,6 +55,7 @@ function EasyMap(config){
     this.map_ext_src = new EasyExternalResource({map: this.map_obj});
     this.map_geojson = new EasyGeoJSON({map: this.map_obj});
     this.map_context = new EasyContextMenu({map: this.map_obj});
+	this.geocoder = new google.maps.Geocoder();
     
     this.allowed_map_bounds;
     this.max_zoom_level;
@@ -241,11 +242,19 @@ EasyMap.prototype = {
                 parent.map_obj.setZoom(zoom);
                 
                 if (callback != null){
-                    callback();
+                    callback(devCenter);
                 }
             });
         }
     },
+	reverseGeoCode: function(lat_lng, call){
+		var point = new google.maps.LatLng(lat_lng[0], lat_lng[1]);
+		var callback = call;
+		
+		this.geocoder.geocode({'latLng': point}, function(results, status){
+			callback(results);
+		});
+	},
     _attachMapEvents: function(){
         var parent = this;
         google.maps.event.addListener(this.map_obj, 'drag', function(){
