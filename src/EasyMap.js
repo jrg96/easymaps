@@ -63,6 +63,8 @@ function EasyMap(config){
     
     this._attachMapEvents();
     this.initInfoWindowSystem();
+    
+    this.dragend_callback;
 }
 
 EasyMap.prototype = {
@@ -85,6 +87,9 @@ EasyMap.prototype = {
     },
     setZoom: function(zoom){
         this.map_obj.setZoom(zoom);
+    },
+    getBounds: function(){
+        return this.map_obj.getBounds();
     },
     changeToRoadmap: function(){
         this.map_obj.setMapTypeId(google.maps.MapTypeId.google.maps.MapTypeId.ROADMAP);
@@ -250,6 +255,9 @@ EasyMap.prototype = {
 	reverseGeoCode: function(lat_lng, call){
 		this.map_geocoder.reverseGeoCode(lat_lng, call);
 	},
+    onDragEnd: function(callback){
+        this.dragend_callback = callback;
+    },
     _attachMapEvents: function(){
         var parent = this;
         google.maps.event.addListener(this.map_obj, 'drag', function(){
@@ -271,6 +279,15 @@ EasyMap.prototype = {
         google.maps.event.addListener(this.map_obj, 'mousemove', function(e) {
             parent._mapMouseMove(e);
         });
+        
+        google.maps.event.addListener(this.map_obj, 'dragend', function(e) {
+            parent._mapDragEnd(e);
+        });
+    },
+    _mapDragEnd: function(e){
+        if (this.dragend_callback != null){
+            this.dragend_callback(e);
+        }
     },
     _mapRightClick: function(e){
         if (this.map_context.getClass() != null && this.map_context.getHTML() != null){
