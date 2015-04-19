@@ -22,6 +22,7 @@ function EasyMap(config){
     this.map_shapes = [];
     this.marker_res = {};
     this.synced_maps = [];
+    this.cluster_by_marker = ((config.clusterMarkers != null) ? config.clusterMarkers : false);
     
     this.logo_div;
     this.logo_img;

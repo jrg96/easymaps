@@ -13,58 +13,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
  
-function EasyMarker(config, map){
+function EasyMarkerCluster(config, map){
     this.latitude = config.latitude;
     this.longitude = config.longitude;
-    this.real_latitude = config.latitude;
-    this.real_longitude = config.longitude;
-    this.title = ((config.title != null) ? config.title : '');
-    this.map = map.map_obj;
+    this.marker_data = config.markers;
+    this.easy_markers = [];
+    this.map = map;
     this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
-    this.marker = null;
-    this.metadata = null;
-    this.content = null;
-    this.infoWindow = null;
     this.initMarker();
 }
  
-EasyMarker.prototype = {
-    constructor: EasyMarker,
+EasyMarkerCluster.prototype = {
+    constructor: EasyMarkerCluster,
     initMarker: function(){
         this.marker = new google.maps.Marker({
             position: new google.maps.LatLng(this.latitude, this.longitude),
-            map: this.map,
-            title: this.title,
+            map: this.map.map_obj,
             icon: this.icon
         });
-    },
-    setMetadata: function(metadata){
-        this.metadata = metadata;
-    },
-    getMetadata: function(){
-        return this.metadata;
-    },
-    setInfoContent: function(content){
-        this.content = content;
-    },
-    getInfoContent: function(){
-        return this.content;
-    },
-    setInfoWindow: function(window){
-        this.infoWindow = window;
-    },
-    showInfoWindow: function(value){
-        if (value != null){
-            this.content = value;
+        
+        google.maps.event.addListener(this.marker, 'click', function(){
+            alert("Marcador maestro clickado");
+        });
+        
+        this.map.map_markers.push(this.marker);
+        
+        for (var i=0; i<this.marker_data.length; i++){
+            var mark = new EasyMarker({
+                latitude: this.marker_data[i].lat,
+                longitude: this.marker_data[i].lng,
+            }, this.map);
+            this.easy_markers.push(mark);
+            mark.hide();
         }
-        this.infoWindow.setContent(this.getInfoContent());
-        this.infoWindow.open(this.map, this.marker);
-    },
-    latLng: function(){
-        var json = {lat: this.real_latitude, lng: this.real_longitude};
-    },
-    show: function(){
-        this.marker.setMap(this.map);
     },
     hide: function(){
         this.marker.setMap(null);
