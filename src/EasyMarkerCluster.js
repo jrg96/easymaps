@@ -47,8 +47,8 @@ EasyMarkerCluster.prototype = {
             var y = 0.004*Math.sin(rads);
             var x = 0.004*Math.cos(rads);
             
-            this.easy_markers[i].latitude = this.easy_markers[i].real_latitude + y;
-            this.easy_markers[i].longitude = this.easy_markers[i].real_longitude + x;
+            this.easy_markers[i].latitude = this.latitude + y;
+            this.easy_markers[i].longitude = this.longitude + x;
             this.easy_markers[i].updateChildPos();
             this.easy_markers[i].hide();
             

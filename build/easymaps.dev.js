@@ -840,8 +840,8 @@ EasyMarkerCluster.prototype = {
             var rads = current_degrees * (Math.PI / 180);
             var y = .004 * Math.sin(rads);
             var x = .004 * Math.cos(rads);
-            this.easy_markers[i].latitude = this.easy_markers[i].real_latitude + y;
-            this.easy_markers[i].longitude = this.easy_markers[i].real_longitude + x;
+            this.easy_markers[i].latitude = this.latitude + y;
+            this.easy_markers[i].longitude = this.longitude + x;
             this.easy_markers[i].updateChildPos();
             this.easy_markers[i].hide();
             current_degrees += degrees;
