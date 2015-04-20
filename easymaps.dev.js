@@ -486,8 +486,8 @@ EasyMarkerCluster.prototype = {
         
         for (var i=0; i<this.easy_markers.length; i++){
             var rads = current_degrees * (Math.PI / 180);
-            var y = 0.004*Math.sin(radians);
-            var x = 0.004*Math.cos(radians);
+            var y = 0.004*Math.sin(rads);
+            var x = 0.004*Math.cos(rads);
             
             this.easy_markers[i].latitude = this.easy_markers[i].real_latitude + y;
             this.easy_markers[i].longitude = this.easy_markers[i].real_longitude + x;
@@ -506,7 +506,7 @@ EasyMarkerCluster.prototype = {
 }
 
 
-// --- file[EasyLine.js] ---
+// --- file[EasyGeoJSON.js] ---
 
 /* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
  *
@@ -523,32 +523,40 @@ EasyMarkerCluster.prototype = {
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
  
- function EasyLine(config, map){
-    this.strokeColor = config.stroke;
-    this.strokeOpacity = config.opacity;
-    this.strokeWeight = config.weight;
-    
-    this.map = map.map_obj;
-    this.route = new google.maps.MVCArray();
-    this.polyline = new google.maps.Polyline({
-        path: this.route,
-        strokeColor: this.strokeColor,
-        strokeWeight: this.strokeWeight,
-        strokeOpacity: this.strokeOpacity
-    });
-    this.setMap(this.map);
-}
-
-EasyLine.prototype = {
-    constructor: EasyLine,
-    setMap: function(map){
-        this.map = map;
-        this.polyline.setMap(this.map);
+ function EasyGeoJSON(config){
+    this.map = config.map;
+    this.featureArr;
+ }
+ 
+ EasyGeoJSON.prototype = {
+    constructor: EasyGeoJSON,
+    loadGeoJSON: function(url){
+        this.map.data.loadGeoJson(url);
     },
-    addPoint: function(latitude, longitude){
-        this.route.push(new google.maps.LatLng(latitude, longitude));
+    addGeoJSON: function(data){
+        this.featureArr = this.map.data.addGeoJson(data);
+    },
+    changeStyleByProperty: function(property, value, style){
+        var matches = this.searchMatchFeatures(property, value);
+        
+        for (var i=0; i<matches.length; i++){
+            this.map.data.overrideStyle(matches[i], style);
+        }
+    },
+    searchMatchFeatures: function(property, value){
+        var matches = [];
+        
+        for (var i=0; i<this.featureArr.length; i++){
+            var feature = this.featureArr[i];
+            
+            if (feature.getProperty(property) == value){
+                matches.push(feature);
+            }
+        }
+        
+        return matches;
     }
-}
+ }
 
 // --- file[EasyLineProperties.js] ---
 
@@ -601,6 +609,197 @@ EasyLineProperties.prototype = {
         };
     }
 }
+
+// --- file[EasyContextMenu.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+ function EasyContextMenu(config){
+    this.className = ((config.className != null) ? config.className : 'visibility: hidden; background: #ffffff; border: 1px solid #8888FF; z-index: 10; position: relative; width: 100px; height: 100px; padding: 5px;');
+    this.innerHTML = ((config.innerHTML != null) ? config.innerHTML : '');
+    this.map = config.map;
+    this.menuDiv;
+    this.setMap(this.map);
+}
+
+EasyContextMenu.prototype = new google.maps.OverlayView();
+EasyContextMenu.prototype.draw = function(){};
+EasyContextMenu.prototype.onAdd = function(){
+    var parent = this;
+    this.menuDiv = document.createElement('div');
+    this.menuDiv.setAttribute('style', this.className);
+    this.menuDiv.innerHTML = this.innerHTML;
+    this.getPanes().floatPane.appendChild(this.menuDiv);
+    
+    google.maps.event.addListener(this.map, 'click', function(mouseEvent){
+        parent.hide();
+    });
+};
+
+EasyContextMenu.prototype.onRemove = function(){
+    this.menuDiv.parentNode.removeChild(this.menuDiv);
+};
+
+EasyContextMenu.prototype.show = function(coord){
+    var proj = this.getProjection();
+    var mouseCoords = proj.fromLatLngToDivPixel(coord);
+    var left = Math.floor(mouseCoords.x);
+    var top = Math.floor(mouseCoords.y);
+    this.menuDiv.style.display = 'block';
+    this.menuDiv.style.left = left + 'px';
+    this.menuDiv.style.top = top + 'px';
+    this.menuDiv.style.visibility = 'visible';
+};
+
+EasyContextMenu.prototype.hide = function(){
+    this.menuDiv.style.visibility = 'hidden';
+};
+
+EasyContextMenu.prototype.setClass = function(className){
+    this.className = className;
+};
+
+EasyContextMenu.prototype.setHTML = function(innerHTML){
+    this.innerHTML = innerHTML;
+};
+
+EasyContextMenu.prototype.getClass = function(className){
+    return this.className;
+};
+
+EasyContextMenu.prototype.getHTML = function(innerHTML){
+    return this.innerHTML;
+};
+
+// --- file[EasyLine.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+ function EasyLine(config, map){
+    this.strokeColor = config.stroke;
+    this.strokeOpacity = config.opacity;
+    this.strokeWeight = config.weight;
+    
+    this.map = map.map_obj;
+    this.route = new google.maps.MVCArray();
+    this.polyline = new google.maps.Polyline({
+        path: this.route,
+        strokeColor: this.strokeColor,
+        strokeWeight: this.strokeWeight,
+        strokeOpacity: this.strokeOpacity
+    });
+    this.setMap(this.map);
+}
+
+EasyLine.prototype = {
+    constructor: EasyLine,
+    setMap: function(map){
+        this.map = map;
+        this.polyline.setMap(this.map);
+    },
+    addPoint: function(latitude, longitude){
+        this.route.push(new google.maps.LatLng(latitude, longitude));
+    }
+}
+
+// --- file[EasyMapExternalResource.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+function EasyExternalResource(config){
+    this.resources = {};
+    this.map = config.map;
+}
+ 
+EasyExternalResource.prototype = {
+    constructor: EasyExternalResource,
+    addSource: function(config){
+        this.resources[config.name] = new google.maps.KmlLayer(config.url);
+    },
+    setSource: function(name){
+        var KML = this.resources[name];
+        KML.setMap(this.map);
+    }
+}
+
+// --- file[EasyGeoCoder.js] ---
+
+/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
+ 
+  function EasyGeoCoder(config){
+    this.map = config.map;
+    this.geocoder = config.geocoder;
+ }
+ 
+ EasyGeoCoder.prototype = {
+    constructor: EasyGeoCoder,
+	reverseGeoCode: function(lat_lng, call){
+		var point = new google.maps.LatLng(lat_lng[0], lat_lng[1]);
+		var callback = call;
+		var parent = this;
+		
+		this.geocoder.geocode({'latLng': point}, function(results, status){
+			var wrapped_data = parent.makeGeoCoderData(results);
+			callback(wrapped_data);
+		});
+	},
+    makeGeoCoderData: function(raw){
+        var data = new EasyGeoCoderData(raw);
+		return data;
+    }
+ }
 
 // --- file[EasyMapStyleManager.js] ---
 
@@ -682,113 +881,6 @@ EasyMapStyleManager.prototype = {
     }
 }
 
-// --- file[EasyContextMenu.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
- function EasyContextMenu(config){
-    this.className = ((config.className != null) ? config.className : 'visibility: hidden; background: #ffffff; border: 1px solid #8888FF; z-index: 10; position: relative; width: 100px; height: 100px; padding: 5px;');
-    this.innerHTML = ((config.innerHTML != null) ? config.innerHTML : '');
-    this.map = config.map;
-    this.menuDiv;
-    this.setMap(this.map);
-}
-
-EasyContextMenu.prototype = new google.maps.OverlayView();
-EasyContextMenu.prototype.draw = function(){};
-EasyContextMenu.prototype.onAdd = function(){
-    var parent = this;
-    this.menuDiv = document.createElement('div');
-    this.menuDiv.setAttribute('style', this.className);
-    this.menuDiv.innerHTML = this.innerHTML;
-    this.getPanes().floatPane.appendChild(this.menuDiv);
-    
-    google.maps.event.addListener(this.map, 'click', function(mouseEvent){
-        parent.hide();
-    });
-};
-
-EasyContextMenu.prototype.onRemove = function(){
-    this.menuDiv.parentNode.removeChild(this.menuDiv);
-};
-
-EasyContextMenu.prototype.show = function(coord){
-    var proj = this.getProjection();
-    var mouseCoords = proj.fromLatLngToDivPixel(coord);
-    var left = Math.floor(mouseCoords.x);
-    var top = Math.floor(mouseCoords.y);
-    this.menuDiv.style.display = 'block';
-    this.menuDiv.style.left = left + 'px';
-    this.menuDiv.style.top = top + 'px';
-    this.menuDiv.style.visibility = 'visible';
-};
-
-EasyContextMenu.prototype.hide = function(){
-    this.menuDiv.style.visibility = 'hidden';
-};
-
-EasyContextMenu.prototype.setClass = function(className){
-    this.className = className;
-};
-
-EasyContextMenu.prototype.setHTML = function(innerHTML){
-    this.innerHTML = innerHTML;
-};
-
-EasyContextMenu.prototype.getClass = function(className){
-    return this.className;
-};
-
-EasyContextMenu.prototype.getHTML = function(innerHTML){
-    return this.innerHTML;
-};
-
-// --- file[EasyMapExternalResource.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
-function EasyExternalResource(config){
-    this.resources = {};
-    this.map = config.map;
-}
- 
-EasyExternalResource.prototype = {
-    constructor: EasyExternalResource,
-    addSource: function(config){
-        this.resources[config.name] = new google.maps.KmlLayer(config.url);
-    },
-    setSource: function(name){
-        var KML = this.resources[name];
-        KML.setMap(this.map);
-    }
-}
-
 // --- file[EasyShape.js] ---
 
 /* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
@@ -822,58 +914,6 @@ EasyShape.prototype = {
         this.polygon.setMap(this.map);
     }
 }
-
-// --- file[EasyGeoJSON.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto G�mez L�pez <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
- function EasyGeoJSON(config){
-    this.map = config.map;
-    this.featureArr;
- }
- 
- EasyGeoJSON.prototype = {
-    constructor: EasyGeoJSON,
-    loadGeoJSON: function(url){
-        this.map.data.loadGeoJson(url);
-    },
-    addGeoJSON: function(data){
-        this.featureArr = this.map.data.addGeoJson(data);
-    },
-    changeStyleByProperty: function(property, value, style){
-        var matches = this.searchMatchFeatures(property, value);
-        
-        for (var i=0; i<matches.length; i++){
-            this.map.data.overrideStyle(matches[i], style);
-        }
-    },
-    searchMatchFeatures: function(property, value){
-        var matches = [];
-        
-        for (var i=0; i<this.featureArr.length; i++){
-            var feature = this.featureArr[i];
-            
-            if (feature.getProperty(property) == value){
-                matches.push(feature);
-            }
-        }
-        
-        return matches;
-    }
- }
 
 // --- file[EasyGeoCoderData.js] ---
 
@@ -920,45 +960,5 @@ EasyShape.prototype = {
 		}
 		return data;
 	}
- }
-
-// --- file[EasyGeoCoder.js] ---
-
-/* Copyright (c) 2014 Jorge Alberto Gómez López <gomezlopez.jorge96@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.*/
- 
-  function EasyGeoCoder(config){
-    this.map = config.map;
-    this.geocoder = config.geocoder;
- }
- 
- EasyGeoCoder.prototype = {
-    constructor: EasyGeoCoder,
-	reverseGeoCode: function(lat_lng, call){
-		var point = new google.maps.LatLng(lat_lng[0], lat_lng[1]);
-		var callback = call;
-		var parent = this;
-		
-		this.geocoder.geocode({'latLng': point}, function(results, status){
-			var wrapped_data = parent.makeGeoCoderData(results);
-			callback(wrapped_data);
-		});
-	},
-    makeGeoCoderData: function(raw){
-        var data = new EasyGeoCoderData(raw);
-		return data;
-    }
  }
 
