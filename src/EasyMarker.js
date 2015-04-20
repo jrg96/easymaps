@@ -63,6 +63,9 @@ EasyMarker.prototype = {
     latLng: function(){
         var json = {lat: this.real_latitude, lng: this.real_longitude};
     },
+    updateChildPos: function(){
+        this.marker.setPosition(new google.maps.LatLng(this.latitude, this.longitude));
+    },
     show: function(){
         this.marker.setMap(this.map);
     },

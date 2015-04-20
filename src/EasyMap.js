@@ -18,6 +18,7 @@ function EasyMap(config){
     this.map_obj = null;
     this.info_window_system = ((config.infoWindowSystem != null) ? config.infoWindowSystem : EasyMap.InfoWindowSystem.ONE_WINDOW);
     this.map_markers = [];
+    this.master_markers = [];
     this.map_lines = [];
     this.map_shapes = [];
     this.marker_res = {};
