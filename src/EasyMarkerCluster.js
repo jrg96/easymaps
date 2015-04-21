@@ -23,6 +23,12 @@ function EasyMarkerCluster(config, map){
     this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
     this.initMarker();
     this.bounds = {lat: 0.0001, lng: 0.0001};
+	this.k = 0.0001;
+	
+	
+    var sw = new google.maps.LatLng(this.latitude - k, this.longitude - k);
+    var ne = new google.maps.LatLng(this.latitude + k, this.longitude + k);
+    this.bounds = new google.maps.LatLngBounds(sw, ne);
 }
  
 EasyMarkerCluster.prototype = {
@@ -55,6 +61,12 @@ EasyMarkerCluster.prototype = {
             current_degrees += degrees;
         }
     },
+    contains: function(marker){
+        if (this.bounds.contains(marker.marker.getPosition())){
+            return true;
+        }
+        return false;
+	},
     hide: function(){
         this.marker.setMap(null);
     },

@@ -820,6 +820,10 @@ function EasyMarkerCluster(config, map) {
         lat: 1e-4,
         lng: 1e-4
     };
+    this.k = 1e-4;
+    var sw = new google.maps.LatLng(this.latitude - k, this.longitude - k);
+    var ne = new google.maps.LatLng(this.latitude + k, this.longitude + k);
+    this.bounds = new google.maps.LatLngBounds(sw, ne);
 }
 
 EasyMarkerCluster.prototype = {
@@ -846,6 +850,12 @@ EasyMarkerCluster.prototype = {
             this.easy_markers[i].hide();
             current_degrees += degrees;
         }
+    },
+    contains: function(marker) {
+        if (this.bounds.contains(marker.marker.getPosition())) {
+            return true;
+        }
+        return false;
     },
     hide: function() {
         this.marker.setMap(null);
