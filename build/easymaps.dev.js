@@ -834,6 +834,10 @@ EasyMarkerCluster.prototype = {
             map: this.map.map_obj,
             icon: this.icon
         });
+        var parent = this;
+        google.maps.event.addListener(this.marker, "click", function() {
+            parent.showMarkers();
+        });
         this.map.master_markers.push(this.marker);
     },
     addChildMarker: function(marker) {
@@ -856,6 +860,16 @@ EasyMarkerCluster.prototype = {
             return true;
         }
         return false;
+    },
+    showMarkers: function() {
+        for (var i = 0; i < this.easy_markers.length; i++) {
+            this.easy_markers[i].show();
+        }
+    },
+    hideMarkers: function() {
+        for (var i = 0; i < this.easy_markers.length; i++) {
+            this.easy_markers[i].hide();
+        }
     },
     hide: function() {
         this.marker.setMap(null);
