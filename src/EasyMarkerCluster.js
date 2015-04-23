@@ -23,11 +23,10 @@ function EasyMarkerCluster(config, map){
     this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
     this.initMarker();
     this.bounds = {lat: 0.0001, lng: 0.0001};
-	this.k = 0.0001;
-	
-	
-    var sw = new google.maps.LatLng(this.latitude - k, this.longitude - k);
-    var ne = new google.maps.LatLng(this.latitude + k, this.longitude + k);
+    this.k = 0.0001;
+    
+    var sw = new google.maps.LatLng(this.latitude - this.k, this.longitude - this.k);
+    var ne = new google.maps.LatLng(this.latitude + this.k, this.longitude + this.k);
     this.bounds = new google.maps.LatLngBounds(sw, ne);
 }
  
@@ -46,7 +45,7 @@ EasyMarkerCluster.prototype = {
             parent.showMarkers();
         });
         
-        this.map.master_markers.push(this.marker);
+        this.map.master_markers.push(this);
     },
     addChildMarker: function(marker){
         this.easy_markers.push(marker);

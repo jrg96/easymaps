@@ -158,6 +158,8 @@ EasyMap.prototype = {
                         longitude: marker.longitude,
                     }, this);
                     
+                    master_marker.addChildMarker(marker);
+                    
                     for (var i=0; i<matches.length; i++){
                         master_marker.addChildMarker(matches[i]);
                     }

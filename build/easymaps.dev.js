@@ -410,6 +410,7 @@ EasyMap.prototype = {
                         latitude: marker.latitude,
                         longitude: marker.longitude
                     }, this);
+                    master_marker.addChildMarker(marker);
                     for (var i = 0; i < matches.length; i++) {
                         master_marker.addChildMarker(matches[i]);
                     }
@@ -855,8 +856,8 @@ function EasyMarkerCluster(config, map) {
         lng: 1e-4
     };
     this.k = 1e-4;
-    var sw = new google.maps.LatLng(this.latitude - k, this.longitude - k);
-    var ne = new google.maps.LatLng(this.latitude + k, this.longitude + k);
+    var sw = new google.maps.LatLng(this.latitude - this.k, this.longitude - this.k);
+    var ne = new google.maps.LatLng(this.latitude + this.k, this.longitude + this.k);
     this.bounds = new google.maps.LatLngBounds(sw, ne);
 }
 
@@ -872,7 +873,7 @@ EasyMarkerCluster.prototype = {
         google.maps.event.addListener(this.marker, "click", function() {
             parent.showMarkers();
         });
-        this.map.master_markers.push(this.marker);
+        this.map.master_markers.push(this);
     },
     addChildMarker: function(marker) {
         this.easy_markers.push(marker);
