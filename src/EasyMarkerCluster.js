@@ -24,6 +24,7 @@ function EasyMarkerCluster(config, map){
     this.initMarker();
     this.bounds = {lat: 0.0001, lng: 0.0001};
     this.k = 0.0001;
+    this.markers_hide = true;
     
     var sw = new google.maps.LatLng(this.latitude - this.k, this.longitude - this.k);
     var ne = new google.maps.LatLng(this.latitude + this.k, this.longitude + this.k);
@@ -42,7 +43,12 @@ EasyMarkerCluster.prototype = {
         
         var parent = this;
         google.maps.event.addListener(this.marker, 'click', function(){
-            parent.showMarkers();
+            if (parent.markers_hide){
+                parent.showMarkers();
+            } else{
+                parent.hideMarkers();
+            }
+            parent.markers_hide = !parent.markers_hide;
         });
         
         this.map.master_markers.push(this);

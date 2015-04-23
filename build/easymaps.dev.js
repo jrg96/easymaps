@@ -856,6 +856,7 @@ function EasyMarkerCluster(config, map) {
         lng: 1e-4
     };
     this.k = 1e-4;
+    this.markers_hide = true;
     var sw = new google.maps.LatLng(this.latitude - this.k, this.longitude - this.k);
     var ne = new google.maps.LatLng(this.latitude + this.k, this.longitude + this.k);
     this.bounds = new google.maps.LatLngBounds(sw, ne);
@@ -871,7 +872,12 @@ EasyMarkerCluster.prototype = {
         });
         var parent = this;
         google.maps.event.addListener(this.marker, "click", function() {
-            parent.showMarkers();
+            if (parent.markers_hide) {
+                parent.showMarkers();
+            } else {
+                parent.hideMarkers();
+            }
+            parent.markers_hide = !parent.markers_hide;
         });
         this.map.master_markers.push(this);
     },
