@@ -400,6 +400,22 @@ EasyMap.prototype = {
                 var ne = new google.maps.LatLng(marker.latitude + k, marker.longitude + k);
                 var bounds = new google.maps.LatLngBounds(sw, ne);
                 var matches = [];
+                for (var i = 0; i < this.map_markers.length; i++) {
+                    if (bounds.contains(this.map_markers[i].marker.getPosition())) {
+                        matches.push(this.map_markers[i]);
+                    }
+                }
+                if (matches.length > 0) {
+                    var master_marker = new EasyMarkerCluster({
+                        latitude: marker.latitude,
+                        longitude: marker.longitude
+                    }, this);
+                    for (var i = 0; i < matches.length; i++) {
+                        master_marker.addChildMarker(matches[i]);
+                    }
+                } else {
+                    this.map_markers.push(marker);
+                }
             }
         } else {
             this.map_markers.push(marker);

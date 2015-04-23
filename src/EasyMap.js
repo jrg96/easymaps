@@ -146,7 +146,26 @@ EasyMap.prototype = {
                 
                 var matches = [];
                 
+                for (var i=0; i<this.map_markers.length; i++){
+                    if (bounds.contains(this.map_markers[i].marker.getPosition())){
+                        matches.push(this.map_markers[i]);
+                    }
+                }
                 
+                if (matches.length > 0){
+                    var master_marker = new EasyMarkerCluster({
+                        latitude: marker.latitude,
+                        longitude: marker.longitude,
+                    }, this);
+                    
+                    for (var i=0; i<matches.length; i++){
+                        master_marker.addChildMarker(matches[i]);
+                    }
+                } else{
+                    this.map_markers.push(marker);
+                }
+                
+                // TODO: function to pop out the markers added to the cluster from the map_markers var 
             }
             
         } else{
