@@ -377,7 +377,6 @@ EasyMap.prototype = {
         google.maps.event.addListener(marker.marker, "click", function() {
             parent.marker_callback(marker);
         });
-        this.map_markers.push(marker);
         marker.setMetadata(config.metadata);
         var infoWindow = this.infoWindow;
         if (this.info_window_system == EasyMap.InfoWindowSystem.MULTIPLE_WINDOW) {
@@ -386,6 +385,25 @@ EasyMap.prototype = {
             });
         }
         marker.setInfoWindow(infoWindow);
+        if (this.cluster_by_marker) {
+            var clustered = false;
+            for (var i = 0; i < this.master_markers.length; i++) {
+                if (this.master_markers[i].contains(marker)) {
+                    this.master_markers[i].addChildMarker(marker);
+                    clustered = true;
+                    break;
+                }
+            }
+            if (!clustered) {
+                var k = 1e-4;
+                var sw = new google.maps.LatLng(marker.latitude - k, marker.longitude - k);
+                var ne = new google.maps.LatLng(marker.latitude + k, marker.longitude + k);
+                var bounds = new google.maps.LatLngBounds(sw, ne);
+                var matches = [];
+            }
+        } else {
+            this.map_markers.push(marker);
+        }
         return marker;
     },
     clearAllMarkers: function() {
