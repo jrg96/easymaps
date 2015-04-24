@@ -162,12 +162,12 @@ EasyMap.prototype = {
                     
                     for (var i=0; i<matches.length; i++){
                         master_marker.addChildMarker(matches[i]);
+                        var i = this.map_markers.indexOf(matches[i]);
+                        map_markers.splice(i, 1);
                     }
                 } else{
                     this.map_markers.push(marker);
                 }
-                
-                // TODO: function to pop out the markers added to the cluster from the map_markers var 
             }
             
         } else{
