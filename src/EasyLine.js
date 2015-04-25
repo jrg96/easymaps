@@ -39,5 +39,17 @@ EasyLine.prototype = {
     },
     addPoint: function(latitude, longitude){
         this.route.push(new google.maps.LatLng(latitude, longitude));
+    },
+    show: function(){
+        this.visibility(true);
+    },
+    hide: function(){
+        this.visibility(false);
+    },
+    visibility: function(bool){
+        this.polyline.setVisible(bool);
+    },
+    remove: function(){
+        this.setMap(null);
     }
 }

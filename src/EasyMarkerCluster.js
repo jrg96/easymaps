@@ -19,6 +19,7 @@ function EasyMarkerCluster(config, map){
     this.latitude = config.latitude;
     this.longitude = config.longitude;
     this.easy_markers = [];
+    this.easy_lines = [];
     this.map = map;
     this.icon = ((config.icon != null) ? map.marker_res[config.icon] : '');
     this.initMarker();
@@ -44,8 +45,10 @@ EasyMarkerCluster.prototype = {
         var parent = this;
         google.maps.event.addListener(this.marker, 'click', function(){
             if (parent.markers_hide){
+                parent.showLines();
                 parent.showMarkers();
             } else{
+                parent.hideLines();
                 parent.hideMarkers();
             }
             parent.markers_hide = !parent.markers_hide;
@@ -55,6 +58,7 @@ EasyMarkerCluster.prototype = {
     },
     addChildMarker: function(marker){
         this.easy_markers.push(marker);
+        this.removeLines();
         
         var degrees = 360 / this.easy_markers.length;
         var current_degrees = degrees;
@@ -69,7 +73,34 @@ EasyMarkerCluster.prototype = {
             this.easy_markers[i].updateChildPos();
             this.easy_markers[i].hide();
             
+            var line = new EasyLine({
+                stroke: '#000000',
+                opacity: 1.0,
+                weight: 2
+            }, this.map);
+            
+            line.addPoint(this.latitude, this.longitude);
+            line.addPoint(this.latitude + y, this.longitude + x);
+            this.easy_lines.push(line);
+            line.hide();
+            
             current_degrees += degrees;
+        }
+    },
+    showLines: function(){
+        for (var i=0; i<this.easy_lines.length; i++){
+            this.easy_lines[i].show();
+        }
+    },
+    removeLines: function(){
+        for (var i=0; i<this.easy_lines.length; i++){
+            this.easy_lines[i].remove();
+        }
+        this.easy_lines = [];
+    },
+    hideLines: function(){
+        for (var i=0; i<this.easy_lines.length; i++){
+            this.easy_lines[i].hide();
         }
     },
     contains: function(marker){
